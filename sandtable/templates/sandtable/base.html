@@ -1,0 +1,46 @@
+{% load static %}
+<!doctype html>
+
+<html>
+
+<head>
+    <link rel="stylesheet" type="text/css" href ="{% static 'css/style.css' %}">  
+</head>
+
+<body>
+
+    {% block content %}{% endblock content %}
+
+
+
+    <nav class="nav">
+        <ul>
+            <li>
+                <a href="{% url 'sandtable:index' %}">
+                    <span class="icon"><ion-icon name="infinite-outline"></ion-icon></span>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'sandtable:tracks' %}">
+                    <span class="icon"><ion-icon name="list-outline"></ion-icon></span>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'sandtable:color' %}">
+                    <span class="icon"><ion-icon name="color-filter-outline"></ion-icon></span>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'sandtable:settings' %}">
+                    <span class="icon"><ion-icon name="settings-outline"></ion-icon></span>
+            </li>
+            </ul>
+        </nav>
+
+        <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+        <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+
+</body>
+
+
+</html>
