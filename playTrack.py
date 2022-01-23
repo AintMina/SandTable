@@ -1,7 +1,7 @@
 import serial, sys, time
 import divideCoords
 
-ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1)
+ser = serial.Serial('/dev/ttyUSB0', 57600, timeout=1)
 ser.reset_input_buffer()
 
 time.sleep(1)
@@ -31,7 +31,7 @@ def waitForResponse():
 
 
 def playTrack(track_name):
-    path = track_name           # Add 'media/' + 
+    path = "media/" + track_name           # Add 'media/' + 
 
     # Get the current coordinates
     writeToSerial('c get coords\n')
@@ -43,7 +43,7 @@ def playTrack(track_name):
     with open(path) as f:
         for line in f:
             if '#' in line or len(line) < 4:
-                pass
+                continue
             
             th_str, r_str = line.split(' ')
             th = float(th_str)
@@ -74,7 +74,6 @@ def playTrack(track_name):
     time.sleep(0.1)
     writeToSerial("c stop")
     time.sleep(0.1)
-    ser.close()
 
 
 if __name__ == "__main__":

@@ -1,9 +1,12 @@
+from cmath import pi
 import math
 
 
 # 0.03 seems a good distance
 def checkDistance(coord1, coord2, distance):
     if coord1[0] == coord2[0]:
+        return False
+    elif coord1[1] == coord2[1]:
         return False
 
     x1, y1 = polarToXY(coord1[0], coord1[1])
@@ -82,5 +85,5 @@ def writeToFile(coords_polar):
 
 
 if __name__ == '__main__':
-    coords = divideBy([0, 0], [0, 1], 0.01)
+    coords = divideBy([pi/2, 1], [0, 1], 0.01)
     writeToFile(coords)

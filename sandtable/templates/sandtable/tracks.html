@@ -2,7 +2,33 @@
 {% load static %}
 
 {% block content %}
-
-
-
+<main class='tracks'>
+    <header>
+        <ul class="header-list">
+            <li>
+                <a href="{% url 'sandtable:tracks' %}">Tracks</a>
+            </li>
+            <li>
+                <a href="{% url 'sandtable:queue' %}">Queue</a>
+            </li>
+        </ul>
+    </header>
+    <div class="track-list-div">
+        <ul class="track-list">
+            {% for track in tracks %}
+            <li>
+                <a href="{% url 'sandtable:track' track.id %}">
+                    <img class="list-pic" src="{{ track.pic.url }}">
+                    <a class="track-name" href="{% url 'sandtable:track' track.id %}">{{ track.name }}</a>
+                </a>
+            </li>
+            {% empty %}
+            <div class='head'><p>No tracks have been added yet.</p></div>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="upload-div">
+        <a href="{% url 'sandtable:upload' %}">Upload</a>
+    </div>
+</main>
 {% endblock content %}

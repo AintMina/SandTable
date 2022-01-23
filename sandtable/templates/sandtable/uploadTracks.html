@@ -1,0 +1,14 @@
+{% extends "sandtable/base.html" %}
+{% load static %}
+
+{% block content %}
+<main class='upload'>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Upload</button>
+      </form>
+    
+      <p><a href="{% url 'sandtable:tracks' %}">Return to home</a></p>
+</main>
+{% endblock content %}

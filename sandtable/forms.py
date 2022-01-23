@@ -7,3 +7,8 @@ class UploadFileForm(forms.ModelForm):
         model = Tracks
         fields = ('file', )
 
+
+class AddToQueueForm(forms.ModelForm):
+    class Meta:
+        model = Queue
+        fields = ()

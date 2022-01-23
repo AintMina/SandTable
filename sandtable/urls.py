@@ -7,6 +7,7 @@ app_name = 'sandtable'
 urlpatterns = [
     path('', index, name='index'),
     path('tracks/', tracks, name='tracks'),
+    path('queue/', queue, name='queue'),
     path('settings/', settings, name='settings'),
     path('color/', color, name='color'),
     path('upload/', uploadTracks, name='upload'),

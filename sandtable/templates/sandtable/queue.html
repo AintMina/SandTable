@@ -1,0 +1,33 @@
+{% extends "sandtable/base.html" %}
+{% load static %}
+
+{% block content %}
+<main class='queue'>
+    <header>
+        <ul class="header-list">
+            <li>
+                <a href="{% url 'sandtable:tracks' %}">Tracks</a>
+            </li>
+            <li>
+                <a href="{% url 'sandtable:queue' %}">Queue</a>
+            </li>
+        </ul>
+    </header>
+    <div class="queue-list-div">
+        <ul class="queue-list">
+            {% for track in queue %}
+            <li>
+                <a>{{ track.file }}</a>
+            </li>
+            {% empty %}
+            <div class='head'><p>Queue is empty.</p></div>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="clear-queue-div">
+        <form action="#" method="get">
+            <input type="submit" class="btn" value="Clear queue" name="clearQueue">
+        </form>
+    </div>
+</main>
+{% endblock content %}

@@ -1,0 +1,21 @@
+{% extends "sandtable/base.html" %}
+{% load static %}
+
+{% block content %}
+<main>
+    <header>
+        <h1>{{ track.name }}</h1>
+        <p class='head'>Length: {{ track.track_length }}</p>
+    </header>
+    <div class="track-info">
+        <img src="{{ track.pic.url }}">
+    </div>
+    <div>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.field.as_hidden }}
+            <button type="submit">Add to queue</button>
+        </form>
+    </div>
+</main>
+{% endblock content %}
