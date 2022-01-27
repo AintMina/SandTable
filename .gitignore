@@ -138,3 +138,11 @@ GitHub.sublime-settings
 
 
 *.thr
+*.txt
+
+# PlaformIO
+arduino/.pioenvs
+arduino/.piolibdeps
+arduino/.clang_complete
+arduino/.gcc-flags.json
+arduino/.pio
