@@ -11,7 +11,7 @@ motor motor1(5, 2, 8, A6);
 motor motor2(6, 3, 8, A7);
 
 void setup() {
-    Serial.begin(57600);
+    Serial.begin(500000);
     while(!Serial) {
         delay(20);
     }
@@ -68,6 +68,16 @@ void loop() {
 					char output[output_string.length() +1];
 					output_string.toCharArray(output, sizeof(output));
 					Serial.write(output);
+				}
+			}
+			// Set command
+			else if(command_str.equalsIgnoreCase("set")) {
+				char* set_command = strtok(0, " ");
+				String set = String(set_command);
+
+				// Get coordinates command
+				if(set.equalsIgnoreCase("speed")) {
+					
 				}
 			}
         }

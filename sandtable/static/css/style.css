@@ -6,33 +6,30 @@
     --bg-primary: #121212;
     --bg-secondary: #222222;
 }
-
 body {
     background-color: var(--bg-primary);
     margin: 0;
     padding: 0;
     height: 100vh;
 }
-
-header{
-    text-align: center;
-    color: var(--text-primary);
+.header{
+    position: fixed;
+    width: 100vw;
+    top: 0;
+    height: 8rem;
+    background-color: var(--bg-secondary);
 }
-.header-list {
+.center {
+    text-align: center;
+    color: var(--text-secondary);
     display: flex;
-    justify-content: space-evenly;
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
+    flex-direction: column;
+    justify-content: center;
 }
-.header-list li {
-    text-align: center;
-}
-.header-list a {
-    color: var(--text-primary);
-    text-decoration: none;
+.center a {
     font-size: 50px;
 }
+
 
 /* Navigation bar */
 .nav {
@@ -40,9 +37,8 @@ header{
     height: 8rem;
     position: fixed;
     bottom: 0;
+    background-color: var(--bg-secondary);
 }
-
-/* Item box */
 ul.nav-list {
     text-align: center;
     display: flex;
@@ -51,33 +47,84 @@ ul.nav-list {
     margin-top: 0px;
     height: 95%;
     list-style-type: none;
+    align-items: center;
 }
-
-/* List of items */
-li {
+ul.nav-list li {
     width: 25%;
-    padding-top: 10px;
+    padding-top: 1rem;
 }
-
-/* Icons */
-.icon {
+ul.nav-list .icon {
     font-size: 70px;
     color: var(--text-primary);
 }
 
+
+/* Index page */
 main.index {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     height: 85%;
 }
+#canvas-div {
+    visibility: visible;
+    height: 0;
+    padding-bottom: 100%;
+    width: 100%;
+    max-width: 1000px;
+    margin: auto;
+    margin-bottom: 0;
+    margin-top: 0;
+}
+.track-playing {
+    font-size: 40px;
+    text-align: center;
+    color: var(--text-primary);
+}
+.track-playing p {
+    margin: 0;
+}
+.media {
+    display: flex;
+    justify-content: space-evenly;
+    text-align: center;
+    align-items: center;
+}
+.media a {
+    width: 33%;
+}
+.media #play .icon {
+    font-size: 200px;
+}
+.pause {
+    display: none;
+}
+
 
 /* Tracks page */
 main.tracks {
-    height: 85%;
+    height: 100%;
+}
+.header-list {
+    height: 100%;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+.header-list li {
+    text-align: center;
+}
+.header-list a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 50px;
 }
 .track-list-div {
-    height: 75vh;
+    margin-top: 8rem;
+    padding-bottom: 12rem;
 }
 ul.track-list {
     text-align: center;
@@ -94,29 +141,43 @@ ul.track-list li {
     justify-content: flex-start;
     width: 50%;
 }
+ul.track-list a {
+    margin-left: 15%;
+    margin-right: 15%;
+}
 ul.track-list .list-pic {
     align-self: center;
-    width: 70%;
+    width: 100%;
 }
 ul.track-list .track-name {
     color: var(--text-primary);
     text-decoration: none;
     font-size: 30px;
 }
+.upload-div {
+    position: fixed;
+    bottom: 10rem;
+    width: 100vw;
+    text-align: center;
+}
+.upload-div a {
+    color: var(--text-secondary);
+    background-color: var(--bg-primary);
+    text-decoration: none;
+    font-size: 30px;
+}
+.empty {
+    text-align: center;
+    font-size: 20px;
+}
+
 
 /* Upload page */
 main.upload {
     color: var(--text-primary);
     text-decoration: none;
 }
-.upload-div {
-    bottom: 0;
-    text-align: center;
-}
-.upload-div a {
-    color: var(--text-primary);
-    text-decoration: none;
-}
+
 
 /* Queue page */
 main.queue {
@@ -145,55 +206,13 @@ ul.queue-list li {
     text-decoration: none;
     font-size: 30px;
 }
-.clear-queue-div {
-    bottom: 0;
-    text-align: center;
-}
 
 
 /* Track page */
 .track-info {
+    margin-top: 8rem;
     width: 98vw;
 }
 .track-info img {
     width: 100%;
-}
-
-
-/* Canvas div */
-#canvas-div {
-    visibility: visible;
-    height: 0;
-    padding-bottom: 100%;
-    width: 100%;
-    max-width: 1000px;
-    margin: auto;
-    margin-bottom: 0;
-    margin-top: 0;
-}
-
-.head {
-    font-size: 40px;
-    text-align: center;
-    color: var(--text-primary);
-}
-.head p {
-    margin: 0;
-}
-
-/* Media buttons */
-.media {
-    display: flex;
-    justify-content: space-evenly;
-    text-align: center;
-    align-items: center;
-}
-.media a {
-    width: 33%;
-}
-.media #play .icon {
-    font-size: 200px;
-}
-.pause {
-    display: none;
 }

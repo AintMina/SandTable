@@ -3,10 +3,10 @@
 
 {% block content %}
 <main>
-    <header>
-        <h1>{{ track.name }}</h1>
-        <p class='head'>Length: {{ track.track_length }}</p>
-    </header>
+    <div class="header center">
+        <a>{{ track.name }}</a>
+        <a style="font-size: 20px;">Length: {{ track.track_length }}</a>
+    </div>
     <div class="track-info">
         <img src="{{ track.pic.url }}">
     </div>

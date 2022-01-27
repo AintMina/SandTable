@@ -3,7 +3,7 @@
 
 {% block content %}
 <main class='queue'>
-    <header>
+    <div class="header">
         <ul class="header-list">
             <li>
                 <a href="{% url 'sandtable:tracks' %}">Tracks</a>
@@ -12,19 +12,19 @@
                 <a href="{% url 'sandtable:queue' %}">Queue</a>
             </li>
         </ul>
-    </header>
-    <div class="queue-list-div">
+    </div>
+    <div class="track-list-div">
         <ul class="queue-list">
             {% for track in queue %}
             <li>
                 <a>{{ track.file }}</a>
             </li>
             {% empty %}
-            <div class='head'><p>Queue is empty.</p></div>
+            <div class='empty'><a>Queue is empty.</a></div>
             {% endfor %}
         </ul>
     </div>
-    <div class="clear-queue-div">
+    <div class="upload-div">
         <form action="#" method="get">
             <input type="submit" class="btn" value="Clear queue" name="clearQueue">
         </form>

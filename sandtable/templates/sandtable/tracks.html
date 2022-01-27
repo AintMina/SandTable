@@ -3,7 +3,7 @@
 
 {% block content %}
 <main class='tracks'>
-    <header>
+    <div class="header">
         <ul class="header-list">
             <li>
                 <a href="{% url 'sandtable:tracks' %}">Tracks</a>
@@ -12,7 +12,7 @@
                 <a href="{% url 'sandtable:queue' %}">Queue</a>
             </li>
         </ul>
-    </header>
+    </div>
     <div class="track-list-div">
         <ul class="track-list">
             {% for track in tracks %}
@@ -23,7 +23,7 @@
                 </a>
             </li>
             {% empty %}
-            <div class='head'><p>No tracks have been added yet.</p></div>
+            <div class='empty'><a>No tracks have been added yet.</a></div>
             {% endfor %}
         </ul>
     </div>

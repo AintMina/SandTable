@@ -1,11 +1,16 @@
 import serial, sys, time
 import divideCoords
 
-ser = serial.Serial('/dev/ttyUSB0', 57600, timeout=1)
+ser = serial.Serial('/dev/ttyUSB0', 500000, timeout=1)
 ser.reset_input_buffer()
 
 time.sleep(1)
-print(ser.readline())
+# Arduino will send 'ready' after connecting serial
+input = ser.readline()
+if "ready" not in input.decode('UTF-8'):
+    print(input)
+    sys.exit()
+print(input)
 
 
 def writeToSerial(data):
@@ -38,6 +43,17 @@ def playTrack(track_name):
     time.sleep(0.01)
     input = waitForResponse()
     input_temp = input.split(' ')
+
+    # Checking if response is correct
+    while len(input_temp) < 2:
+        if "ready" in input:
+            print("Stopping playback")
+            sys.exit()
+        print(input)
+        writeToSerial("c get coords")
+        input = waitForResponse()
+        input_temp = input.split(' ')
+
     coords = [float(input_temp[0]), float(input_temp[1])]       # [theta, r]
 
     with open(path) as f:
@@ -62,12 +78,34 @@ def playTrack(track_name):
                         writeToSerial(output)
                         input = waitForResponse()
                         input_temp = input.split(' ')
+
+                        # Checking if response is correct
+                        while len(input_temp) < 2:
+                            if "ready" in input:
+                                print("Stopping playback")
+                                sys.exit()
+                            print(input)
+                            writeToSerial("c get coords")
+                            input = waitForResponse()
+                            input_temp = input.split(' ')
+                        
                         coords = [float(input_temp[0]), float(input_temp[1])]
 
             # line includes newline
             writeToSerial(line)
             
             input = waitForResponse()
+
+             # Checking if response is correct
+            while len(input_temp) < 2:
+                if "ready" in input:
+                    print("Stopping playback")
+                    sys.exit()
+                print(input)
+                writeToSerial("c get coords")
+                input = waitForResponse()
+                input_temp = input.split(' ')
+
             input_temp = input.split(' ')
             coords = [float(input_temp[0]), float(input_temp[1])]
 
