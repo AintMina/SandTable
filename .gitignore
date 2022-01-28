@@ -55,8 +55,7 @@ develop-eggs/
 dist/ 
 downloads/ 
 eggs/ 
-.eggs/ 
-lib/ 
+.eggs/
 lib64/ 
 parts/ 
 sdist/ 
@@ -129,7 +128,8 @@ Control.system-ca-bundle
 GitHub.sublime-settings 
 
 # Visual Studio Code # 
-.vscode/* 
+.vscode
+arduino/.vscode/
 !.vscode/settings.json 
 !.vscode/tasks.json 
 !.vscode/launch.json 
