@@ -3,10 +3,9 @@ from xml.dom import ValidationErr
 from django.shortcuts import render, redirect
 from .models import *
 from .forms import *
-import thr2png2, os, psutil, writeSerial
+import thr2png, os, psutil, writeSerial
 
 from django.http import HttpResponse
-import json
 from django.views.decorators.csrf import csrf_exempt
 
 
@@ -56,6 +55,7 @@ def queue(request):
     queue = Queue.objects.all()
     context = { 'queue': queue }
 
+    # If clearQueue button is pressed then delete all entries in queue table
     if(request.GET.get('clearQueue')):
         Queue.objects.all().delete()
         return redirect('sandtable:queue')
@@ -68,11 +68,15 @@ def uploadTracks(request):
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
             new_track = form.save(commit=False)
+
             # Get file name
             file_name = request.FILES['file'].name
 
+            # If file exists then raise error
             if os.path.isfile('/home/pi/sand-table/media/tracks/' + file_name):
                 raise ValidationErr('File already exists')
+            
+            # If file is not .thr then raise error
             if '.thr' not in file_name:
                 raise ValidationErr('Not a thr file')
 
@@ -80,7 +84,7 @@ def uploadTracks(request):
             new_track.name = name[0]
             new_track.save()
             # Generate image from .thr and return track length
-            new_track.track_length = thr2png2.drawFile('/home/pi/sand-table/media/tracks/' + file_name)
+            new_track.track_length = thr2png.drawFile('/home/pi/sand-table/media/tracks/' + file_name)
             new_track.pic = 'tracks/' + name[0] + '.png'
             new_track.save()
             
@@ -92,12 +96,6 @@ def uploadTracks(request):
     context = { 'form': form }
 
     return render(request, 'sandtable/uploadTracks.html', context)
-
-
-def editTrack(request, track_id):
-    track = Tracks.objects.get(id=track_id)
-
-    return render(request, 'sandtable/editTrack.html')
 
 
 def settings(request):
@@ -112,10 +110,14 @@ def settings(request):
 
 @csrf_exempt
 def color(request):
+
+    # If entry in the table does not exist, then create new with id=1
     if not RGBW.objects.filter(id=1).exists():
         if request.method == 'POST':
             newcolor = RGBW()
             newcolor.id = 1
+
+            # If POST contains RGB or WHITE
             if 'r' in request.POST:
                 r = request.POST.get('r')
                 newcolor.r = r
@@ -126,9 +128,12 @@ def color(request):
             elif 'w' in request.POST:
                 w = request.POST.get('w')
                 newcolor.w = w
+            
+            # Don't know why I thought that I needed this
             newcolor.changed = True
             newcolor.save()
 
+            # Inserting RGBW values into a string and then writing it to serial
             values = "{} {} {} {}".format(newcolor.r, newcolor.g, newcolor.b, newcolor.w)
             writeSerial.writeToSerial("lc " + values)
 
@@ -142,6 +147,8 @@ def color(request):
         colors = RGBW.objects.get(id=1)
 
         if request.method == 'POST':
+
+            # If POST contains RGB or WHITE
             if 'r' in request.POST:
                 r = request.POST.get('r')
                 colors.r = r
@@ -152,9 +159,12 @@ def color(request):
             elif 'w' in request.POST:
                 w = request.POST.get('w')
                 colors.w = w
+            
+            # Don't know why I thought that I needed this
             colors.changed = True
             colors.save()
 
+            # Inserting RGBW values into a string and then writing it to serial
             values = "{} {} {} {}".format(colors.r, colors.g, colors.b, colors.w)
             print(values)
             writeSerial.writeToSerial("lc " + values)
@@ -166,6 +176,7 @@ def color(request):
             return render(request, 'sandtable/colorPicker.html', context)
 
 
+# Find if process is running and killit if needed
 def checkProcesses(name, kill=False):
     for proc in psutil.process_iter(attrs=["pid", "name", "cmdline"]):
         try:
@@ -173,6 +184,8 @@ def checkProcesses(name, kill=False):
             if "python" in proc.name():
                 for cmd in proc.cmdline():
                     if name.lower() in cmd.lower():
+
+                        # Kill the process if kill=True
                         if kill:
                             proc.kill()
 

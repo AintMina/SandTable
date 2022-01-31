@@ -1,76 +1,50 @@
-import serial, sys, time
-import divideCoords
-
-ser = serial.Serial('/dev/ttyUSB0', 500000, timeout=1)
-ser.reset_input_buffer()
-
-time.sleep(1)
-
-
-def writeToSerial(data):
-    # Checks if data is a string
-    if not isinstance(data, str):
-        data = str(data)
-
-    # Checks if data ends with newline
-    if '\n' not in data:
-        data = data + '\n'
-
-    ser.write(data.encode('UTF-8'))
-
-
-def waitForResponse():
-
-    # Loops while no input
-    while ser.inWaiting() < 1:
-        pass
-
-    input = ser.readline()
-    return input.decode('UTF-8')
+import sys, time
+import divideCoords, writeSerial
 
 
 def playTrack(track_name):
-    path = "media/" + track_name           # Add 'media/' + 
+    path = "media/" + track_name
 
     # Get the current coordinates
-    writeToSerial('c get coords\n')
+    writeSerial.writeToSerial('c get coords\n')
     time.sleep(0.01)
-    input = waitForResponse()
+    # Waiting for response from arduino
+    input = writeSerial.waitForResponse()
     input_temp = input.split(' ')
 
     # Checking if response is correct
     while len(input_temp) < 2:
-        if "ready" in input:
-            print("Stopping playback")
-            sys.exit()
         print(input)
-        writeToSerial("c get coords")
-        input = waitForResponse()
+        writeSerial.writeToSerial("c get coords")
+        input = writeSerial.waitForResponse()
         input_temp = input.split(' ')
 
     coords = [float(input_temp[0]), float(input_temp[1])]       # [theta, r]
 
+    # Opening the .thr file
     with open(path) as f:
+        # Iterating lines
         for line in f:
+            # If line is comment or line does not contain anything then continue to next line
             if '#' in line or len(line) < 4:
                 continue
             
+            # Getting theta and rho from the line and changin them to float values
             th_str, r_str = line.split(' ')
             th = float(th_str)
             r = float(r_str)
 
             # If distance between point is too far (0.03 units)
-            tooFar = divideCoords.checkDistance(coords, [th, r], 0.01)
-            if tooFar:
+            if divideCoords.checkDistance(coords, [th, r], 0.01):
                 split_coords = divideCoords.divideBy(coords, [th, r], 0.03)
-                if not split_coords == 0:
+                if split_coords:
                     for i in split_coords:
                         th_out = str(i[0])
                         r_out = str(i[1])
                         output = th_out + ' ' + r_out
 
-                        writeToSerial(output)
-                        input = waitForResponse()
+                        writeSerial.writeToSerial(output)
+                        input = writeSerial.waitForResponse()
                         input_temp = input.split(' ')
 
                         # Checking if response is correct
@@ -79,16 +53,18 @@ def playTrack(track_name):
                                 print("Stopping playback")
                                 sys.exit()
                             print(input)
-                            writeToSerial("c get coords")
-                            input = waitForResponse()
+                            writeSerial.writeToSerial("c get coords")
+                            input = writeSerial.waitForResponse()
                             input_temp = input.split(' ')
                         
                         coords = [float(input_temp[0]), float(input_temp[1])]
 
-            # line includes newline
-            writeToSerial(line)
+            # Writing line to arduino
+            # Line includes newline
+            writeSerial.writeToSerial(line)
             
-            input = waitForResponse()
+            # Arduino returns its current coordinates
+            input = writeSerial.waitForResponse()
 
              # Checking if response is correct
             while len(input_temp) < 2:
@@ -96,15 +72,14 @@ def playTrack(track_name):
                     print("Stopping playback")
                     sys.exit()
                 print(input)
-                writeToSerial("c get coords")
-                input = waitForResponse()
+                writeSerial.writeToSerial("c get coords")
+                input = writeSerial.waitForResponse()
                 input_temp = input.split(' ')
 
             input_temp = input.split(' ')
             coords = [float(input_temp[0]), float(input_temp[1])]
 
-    time.sleep(0.1)
-    writeToSerial("c stop")
+    # Delay just in case
     time.sleep(0.1)
 
 
