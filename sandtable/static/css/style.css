@@ -70,11 +70,11 @@ main.index {
     visibility: visible;
     height: 0;
     padding-bottom: 100%;
-    width: 100%;
+    width: 90%;
     max-width: 1000px;
     margin: auto;
     margin-bottom: 0;
-    margin-top: 0;
+    margin-top: 8rem;
 }
 .track-playing {
     font-size: 40px;
@@ -92,6 +92,10 @@ main.index {
 }
 .media a {
     width: 33%;
+    color: var(--text-primary);
+}
+.media .icon {
+    font-size: 70px;
 }
 .media #play .icon {
     font-size: 200px;
@@ -215,4 +219,65 @@ ul.queue-list li {
 }
 .track-info img {
     width: 100%;
+}
+
+
+/* Color-picker div */
+#picker {
+    width: 100%;
+    max-width: 1000px;
+    margin: auto;
+    margin-bottom: 0;
+    margin-top: 0;
+    position: absolute;
+}
+#picker .IroColorPicker {
+    margin: 20px;
+    margin-bottom: 20px;
+}
+
+div#rgbw {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+div#rgbw ul {
+    height: 100vw;
+    margin-bottom: -130px;
+    display: flex;
+    justify-content: space-between;
+    list-style-type: none;
+    text-align: center;
+    padding-left: 0;
+}
+div#rgbw li {
+    margin: 0;
+    width: 150px;
+}
+.dot {
+    height: 5rem;
+    width: 5rem;
+    margin-left: 0;
+    margin-right: 0;
+    border-radius: 50%;
+    display: inline-block;
+    font-size: 20px;
+    color: var(--text-primary);
+    text-align: center;
+}
+.dot p {
+    font-size: 35px;
+    margin-top: 0px;
+}
+.dot.red {
+    background-color: red;
+}
+.dot.green {
+    background-color: green;
+}
+.dot.blue {
+    background-color: blue;
+}
+.dot.white {
+    background-color: white;
 }

@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-yo3-am^btpfn7c*ia%8p5nezcqox#_0if9tj4$c6v7c%gujy42
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.1.136:8000', '192.168.1.136', '127.0.0.1:8000', '127.0.0.1']
+ALLOWED_HOSTS = ['192.168.1.136:8000', '192.168.1.136', '127.0.0.1:8000', '127.0.0.1', '172.27.226.206:8000', '172.27.226.206']
 
 STATICFILES_DIRS = [
     str(BASE_DIR) + '/sandtable/static',

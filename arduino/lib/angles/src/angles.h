@@ -1,14 +1,16 @@
-/**
- * 
- * Author: AintMina
- * Date: 25.3.2021
- * Version 0.5
- * 
- * Library to get angles for 2-joint robotic arm.
- * 
- */
+/*
 
+Author: AintMina
+Date: 25.3.2021
+Version 0.5
+ 
+Library to get angles for 2-joint robotic arm.
+
+*/
+#ifndef MATH
+#define MATH
 #include <math.h>
+#endif
 
 
 // Get angles for arm 2 from polar coordinates

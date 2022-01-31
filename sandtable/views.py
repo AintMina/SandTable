@@ -1,13 +1,21 @@
+from ctypes.wintypes import RGB
 from xml.dom import ValidationErr
 from django.shortcuts import render, redirect
 from .models import *
 from .forms import *
 import thr2png2, os, psutil, writeSerial
 
+from django.http import HttpResponse
+import json
+from django.views.decorators.csrf import csrf_exempt
+
 
 # Create your views here.
 def index(request):
-    return render(request, 'sandtable/index.html')
+    playing = checkProcesses("PlayQueue.py")
+
+    context = { 'playing': playing}
+    return render(request, 'sandtable/index.html', context)
 
 
 def tracks(request):
@@ -30,8 +38,9 @@ def track(request, track_id):
             new_queue_track.pic = track.pic
             new_queue_track.save()
 
-            if not checkProcesses("PlayQueue.py"):
-                os.system("/bin/python /home/pi/sand-table/PlayQueue.py &")
+            # Start playing
+            # if not checkProcesses("PlayQueue.py"):
+            #     os.system("/bin/python /home/pi/sand-table/PlayQueue.py &")
             
             return redirect('sandtable:tracks')
     
@@ -101,17 +110,72 @@ def settings(request):
     return render(request, 'sandtable/settings.html')
 
 
+@csrf_exempt
 def color(request):
-    return render(request, 'sandtable/colorPicker.html')
+    if not RGBW.objects.filter(id=1).exists():
+        if request.method == 'POST':
+            newcolor = RGBW()
+            newcolor.id = 1
+            if 'r' in request.POST:
+                r = request.POST.get('r')
+                newcolor.r = r
+                g = request.POST.get('g')
+                newcolor.g = g
+                b = request.POST.get('b')
+                newcolor.b = b
+            elif 'w' in request.POST:
+                w = request.POST.get('w')
+                newcolor.w = w
+            newcolor.changed = True
+            newcolor.save()
+
+            values = "{} {} {} {}".format(newcolor.r, newcolor.g, newcolor.b, newcolor.w)
+            writeSerial.writeToSerial("lc " + values)
+
+            return HttpResponse('')
+
+        else:
+            context = { 'colors': {'r':0, 'g':0, 'b':0, 'w':0} }
+            return render(request, 'sandtable/colorPicker.html', context)
+
+    else:
+        colors = RGBW.objects.get(id=1)
+
+        if request.method == 'POST':
+            if 'r' in request.POST:
+                r = request.POST.get('r')
+                colors.r = r
+                g = request.POST.get('g')
+                colors.g = g
+                b = request.POST.get('b')
+                colors.b = b
+            elif 'w' in request.POST:
+                w = request.POST.get('w')
+                colors.w = w
+            colors.changed = True
+            colors.save()
+
+            values = "{} {} {} {}".format(colors.r, colors.g, colors.b, colors.w)
+            print(values)
+            writeSerial.writeToSerial("lc " + values)
+
+            return HttpResponse('')
+        
+        else:
+            context = { 'colors': colors }
+            return render(request, 'sandtable/colorPicker.html', context)
 
 
-def checkProcesses(name):
+def checkProcesses(name, kill=False):
     for proc in psutil.process_iter(attrs=["pid", "name", "cmdline"]):
         try:
             # Check if process name contains the given name string.
             if "python" in proc.name():
                 for cmd in proc.cmdline():
                     if name.lower() in cmd.lower():
+                        if kill:
+                            proc.kill()
+
                         return True
         except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
             pass

@@ -13,3 +13,12 @@ class Queue(models.Model):
     file = models.CharField(max_length=200)
     track_length = models.IntegerField()
     pic = models.CharField(max_length=200)
+
+
+class RGBW(models.Model):
+    r = models.IntegerField(default=0)
+    g = models.IntegerField(default=0)
+    b = models.IntegerField(default=0)
+    w = models.IntegerField(default=0)
+    led_track = models.CharField(max_length=100, default='None')
+    changed = models.BooleanField(default=False)

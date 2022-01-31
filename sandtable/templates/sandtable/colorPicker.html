@@ -7,6 +7,43 @@
         <a>Color picker</a>
     </div>
     <div class="track-list-div">
+        <div id="picker"></div>
+        <div id="rgbw">
+            <ul>
+                <li>
+                    <a>
+                        <span class="dot red">R
+                            <p id="red">{{ colors.r }}</p>
+                        </span>
+                    </a>
+                </li>
+                <li>
+                    <a>
+                        <span class="dot green">G
+                            <p id="green">{{ colors.g }}</p>
+                        </span>
+                    </a>
+                </li>
+            </ul>
+            <ul class="bottom">
+                <li>
+                    <a>
+                        <span class="dot blue">B
+                            <p id="blue">{{ colors.b }}</p>
+                        </span>
+                    </a>
+                </li>
+                <li>
+                    <a>
+                        <span class="dot white">W
+                            <p id="white">{{ colors.w }}</p>
+                        </span>
+                    </a>
+                </li>
+            </ul>
+        </div>
     </div>
 </main>
+<script src="{% static 'js/iro.min.js' %}"></script>
+<script src="{% static 'js/color.js' %}"></script>
 {% endblock content %}

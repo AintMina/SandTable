@@ -1,14 +1,21 @@
 #include "Arduino.h"
 #include "driver.h"
 #include "angles.h"
+#include "leds.h"
 
 int spr = 600;
 int microstepping = 16;
 float theta1_old = 0, theta2_old = M_PI;
 int draw_speed = 1;
 
-motor motor1(5, 2, 8, A6);
+String led_track = "None";
+unsigned long led_time = millis();
+unsigned int led_speed = 100;
+
+motor motor1(7, 4, 8, A6);
 motor motor2(6, 3, 8, A7);
+
+led leds(11, 9, 10, 5);
 
 void setup() {
     Serial.begin(500000);
@@ -45,6 +52,7 @@ void loop() {
                 home(motor1, motor2);
                 theta1_old = 0.0;
                 theta2_old = M_PI;
+                Serial.write("0.0000 0.0000\n");
             }
 			// Get command
 			else if(command_str.equalsIgnoreCase("get")) {
@@ -85,7 +93,6 @@ void loop() {
         else if(data[0] == 'm' || data[0] == 'M') {
             strtok(data, " ");
             char* command = strtok(0, " ");
-            String command_str = String(command);
             int steps = atoi(command);
 
             if(data[1] == '1'){
@@ -106,6 +113,25 @@ void loop() {
                 motor2.setDirection(steps);
                 motor2.Step(steps);
                 theta2_old += thetaFromSteps(steps, microstepping);
+            }
+        }
+        // Led commands
+        else if(data[0] == 'l' || data[0] == 'L') {
+            strtok(data, " ");
+
+            if(data[1] == 'c' || data[1] == 'C') {
+                char* r = strtok(0, " ");
+                char* g = strtok(0, " ");
+                char* b = strtok(0, " ");
+                char* w = strtok(0, " ");
+                
+                leds.setValue(atoi(r), atoi(g), atoi(b), atoi(w));
+            }
+            else if(data[1] == 't' || data[1] == 'T') {
+                char* track = strtok(0, " ");
+                String led_track = String(track);
+
+                
             }
         }
         else {
@@ -179,6 +205,12 @@ void loop() {
             char output[output_string.length() +1];
             output_string.toCharArray(output, sizeof(output));
             Serial.write(output);
+        }
+    }
+
+    if(millis() - led_time > led_speed) {
+        if(led_track.equalsIgnoreCase("colorFade")) {
+            leds.colorFade();
         }
     }
 }

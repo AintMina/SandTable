@@ -5,12 +5,6 @@ ser = serial.Serial('/dev/ttyUSB0', 500000, timeout=1)
 ser.reset_input_buffer()
 
 time.sleep(1)
-# Arduino will send 'ready' after connecting serial
-input = ser.readline()
-if "ready" not in input.decode('UTF-8'):
-    print(input)
-    sys.exit()
-print(input)
 
 
 def writeToSerial(data):
@@ -119,4 +113,4 @@ if __name__ == "__main__":
         name = sys.argv[1]
         playTrack(name)
     else:
-        playTrack('media/tracks/wormhole.thr')
+        playTrack('/tracks/wormhole.thr')

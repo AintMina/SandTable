@@ -139,6 +139,7 @@ arduino/.vscode/
 
 *.thr
 *.txt
+backup/
 
 # PlaformIO
 arduino/.pioenvs
