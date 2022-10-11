@@ -1,4 +1,3 @@
-from ctypes.wintypes import RGB
 from xml.dom import ValidationErr
 from django.shortcuts import render, redirect
 from .models import *
@@ -12,8 +11,24 @@ from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 def index(request):
     playing = checkProcesses("PlayQueue.py")
+    queue = Queue.objects.all()
+    track_name = ""
+    if len(queue) > 0:
+        track = queue[0].file
+        track_name = track.split('/')[-1].replace(".thr", '')
 
-    context = { 'playing': playing}
+    # Button to start playing
+    if(request.GET.get('playButton')):
+
+        # Start playing
+        if not checkProcesses("PlayQueue.py"):
+            os.system("/bin/python /home/pi/sand-table/PlayQueue.py &")
+        else:
+            checkProcesses("PlayQueue.py", True)
+
+        return redirect('sandtable:index')
+
+    context = { 'playing': playing, 'track_name': track_name  }
     return render(request, 'sandtable/index.html', context)
 
 
@@ -27,8 +42,13 @@ def tracks(request):
 def track(request, track_id):
     track = Tracks.objects.get(id=track_id)
 
+    # Button to delete track
+    if(request.GET.get('deleteTrack')):
+        track.delete()
+        return redirect('sandtable:tracks')
+
     # Add track to queue
-    if request.method == 'POST':
+    elif request.method == 'POST':
         form = AddToQueueForm(request.POST)
         if form.is_valid():
             new_queue_track = form.save(commit=False)
@@ -102,10 +122,37 @@ def settings(request):
 
     # Button to home motors
     if(request.GET.get('homeButton')):
+        checkProcesses("PlayQueue.py", True)
         writeSerial.writeToSerial("c home")
+        #writeSerial.writeToSerial("lt colorFade")
+        
         return redirect('sandtable:settings')
 
-    return render(request, 'sandtable/settings.html')
+    # Button to stop motors
+    elif(request.GET.get('stopButton')):
+        checkProcesses("PlayQueue.py", True)
+        writeSerial.writeToSerial("c stop")
+        return redirect('sandtable:settings')
+
+    # Button to power down the pi
+    elif(request.GET.get('powerButton')):
+        os.system("sudo poweroff")
+        return redirect('sandtable:settings')
+
+    # Button to do led fade
+    elif(request.GET.get('fadeButton')):
+        writeSerial.writeToSerial("lt colorFade")
+        return redirect('sandtable:settings')
+
+    # Motor speed slider
+    elif(request.GET.get('speedSlider')):
+        slider_value = request.GET.get('speedSlider')
+
+        return redirect('sandtable:settings')
+
+    context = {}
+
+    return render(request, 'sandtable/settings.html', context)
 
 
 @csrf_exempt
@@ -135,6 +182,7 @@ def color(request):
 
             # Inserting RGBW values into a string and then writing it to serial
             values = "{} {} {} {}".format(newcolor.r, newcolor.g, newcolor.b, newcolor.w)
+            writeSerial.writeToSerial("lt none")
             writeSerial.writeToSerial("lc " + values)
 
             return HttpResponse('')
@@ -166,7 +214,7 @@ def color(request):
 
             # Inserting RGBW values into a string and then writing it to serial
             values = "{} {} {} {}".format(colors.r, colors.g, colors.b, colors.w)
-            print(values)
+            writeSerial.writeToSerial("lt none")
             writeSerial.writeToSerial("lc " + values)
 
             return HttpResponse('')

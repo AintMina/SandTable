@@ -5,7 +5,7 @@ import playTrack
 def PlayQ():
 
     # Connecting to the database
-    connection = sqlite3.connect('db.sqlite3')
+    connection = sqlite3.connect('/home/pi/sand-table/db.sqlite3')
     cursor = connection.cursor()
 
     # Reading the queue table
@@ -30,4 +30,3 @@ def PlayQ():
 
 if __name__ == "__main__":
     PlayQ()
-    playTrack.ser.close()

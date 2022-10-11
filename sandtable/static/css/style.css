@@ -127,7 +127,7 @@ main.tracks {
     font-size: 50px;
 }
 .track-list-div {
-    margin-top: 8rem;
+    padding-top: 8rem;
     padding-bottom: 12rem;
 }
 ul.track-list {
@@ -235,24 +235,27 @@ ul.queue-list li {
     margin: 20px;
     margin-bottom: 20px;
 }
-
 div#rgbw {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    height: 100vw;
+
 }
 div#rgbw ul {
-    height: 100vw;
-    margin-bottom: -130px;
+    padding-inline-start: 0;
+    height: 95%;
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
     list-style-type: none;
-    text-align: center;
-    padding-left: 0;
+    align-content: space-between;
 }
 div#rgbw li {
+    text-align: start;
     margin: 0;
-    width: 150px;
+    width: 40%;
+}
+div#rgbw li.right {
+    text-align: end;
+    padding-inline-end: 5px;
 }
 .dot {
     height: 5rem;
@@ -280,4 +283,32 @@ div#rgbw li {
 }
 .dot.white {
     background-color: white;
+}
+
+
+/* Settings page */
+.settings-list {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    list-style-type: none;
+}
+.settings-list li {
+    margin: 40px 0;
+    text-align: center;
+}
+.btn {
+    background-color: var(--bg-primary);
+    color: var(--text-secondary);
+    border-radius: 50%;
+    font-size: 40px;
+    padding: 20px 50px;
+}
+.settings-list a {
+    color: var(--text-secondary);
+    font-size: 30px;
+}
+#slider {
+    width: 80vw;
 }

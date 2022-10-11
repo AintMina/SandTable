@@ -9,7 +9,7 @@ def checkDistance(coord1, coord2, distance):
     if coord1[0] == coord2[0]:
         return False
     # Check if the line point are in the outer edge
-    elif coord1[1] == coord2[1]:
+    elif coord1[1] > 0.97 and coord2[1] > 0.97:
         return False
 
     # Changing polar coords to X and Y

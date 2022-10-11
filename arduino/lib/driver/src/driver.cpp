@@ -8,65 +8,61 @@
 
 */
 
+#include "driver.hpp"
+#include "Arduino.h"
 
-class motor {
-    public:
-    char dir, step, enable, sensor;
+motor::motor(char dir_pin, char step_pin, char enable_pin, char sensor_pin) {
+    dir = dir_pin;
+    enable = enable_pin;
+    step = step_pin;
+    sensor = sensor_pin;
 
-    // Constructor for the pins
-    motor(char dir_pin, char step_pin, char enable_pin, char sensor_pin) {
-        dir = dir_pin;
-        enable = enable_pin;
-        step = step_pin;
-        sensor = sensor_pin;
+    // Initiating the pins
+    pinMode(dir, OUTPUT);
+    pinMode(enable, OUTPUT);
+    pinMode(step, OUTPUT);
+    pinMode(sensor, INPUT);
+}
 
-        // Initiating the pins
-        pinMode(dir, OUTPUT);
-        pinMode(enable, OUTPUT);
-        pinMode(step, OUTPUT);
-        pinMode(sensor, INPUT);
+bool motor::sensorCheck() {
+    int val = analogRead(sensor);
+    if (val <= 200) {
+        return false;
     }
-
-    bool sensorCheck() {
-        int val = analogRead(sensor);
-        if (val <= 200) {
-            return false;
-        }
-        else if (val > 200) {
-            return true;
-        }
+    else if (val > 200) {
+        return true;
     }
+}
 
-    // Disable the motor
-    void Stop() {
-        digitalWrite(enable, HIGH);
-    }
+// Disable the motor
+void motor::Stop() {
+    digitalWrite(enable, HIGH);
+}
 
-    // Enable the motor
-    void Enable() {
-        digitalWrite(enable, LOW);
-        delay(10);
-    }
+// Enable the motor
+void motor::Enable() {
+    digitalWrite(enable, LOW);
+    delay(10);
+}
 
-    // Sets the direction pin and enables the motor
-    void setDirection(int steps) {
-        if (steps >= 0) {
-            digitalWrite(dir, HIGH);
-        }
-        else if (steps < 0) {
-            digitalWrite(dir, LOW);
-        }
+// Sets the direction pin and enables the motor
+void motor::setDirection(int steps) {
+    if (steps >= 0) {
+        digitalWrite(dir, HIGH);
     }
+    else if (steps < 0) {
+        digitalWrite(dir, LOW);
+    }
+}
 
-    void Step(int steps, float stepdelay = 1) {
-        for (int i = 0; i < steps; i++) {
-            digitalWrite(step, HIGH);
-            delay(stepdelay);
-            digitalWrite(step, LOW);
-            delay(stepdelay);
-        }
+void motor::Step(int steps, float stepdelay = 1) {
+    for (int i = 0; i < steps; i++) {
+        digitalWrite(step, HIGH);
+        delay(stepdelay);
+        digitalWrite(step, LOW);
+        delay(stepdelay);
     }
-};
+}
 
 // Function to divide the steps
 // motor1 needs to have more steps!

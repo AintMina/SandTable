@@ -25,3 +25,9 @@ class RGBW(models.Model):
     w = models.IntegerField(default=0)
     led_track = models.CharField(max_length=100, default='None')
     changed = models.BooleanField(default=False)
+    led_speed = models.IntegerField(default=100)
+
+
+# Settings
+class Settings(models.Model):
+    motor_speed = models.IntegerField(default=0)

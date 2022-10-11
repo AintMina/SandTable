@@ -7,10 +7,9 @@ Version 0.5
 Library to get angles for 2-joint robotic arm.
 
 */
-#ifndef MATH
-#define MATH
+
 #include <math.h>
-#endif
+#include "angles.hpp"
 
 
 // Get angles for arm 2 from polar coordinates
@@ -46,10 +45,10 @@ float deltaAngles(float theta1, float theta_old) {
 
     float delta_theta = theta1 - theta_old;
 
-    while (delta_theta > 6) {
+    while (delta_theta > 5) {
         delta_theta -= (2*M_PI);
     }
-    while (delta_theta < -6) {
+    while (delta_theta < -5) {
         delta_theta += (2*M_PI);
     }
 

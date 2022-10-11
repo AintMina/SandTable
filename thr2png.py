@@ -22,7 +22,7 @@ def drawFile(file):
         counter = 0
         for line in f:
             # discard if line commented
-            if "#" in line or len(line) < 5:
+            if "#" in line or len(line) < 5 or "/" in line:
                 continue
             
             else:
@@ -49,6 +49,6 @@ if __name__ == "__main__":
         name = sys.argv[1]
         drawFile(name)
     else:
-        drawFile("media/tracks/wormhole.thr")
+        drawFile("media/tracks/sunburst.thr")
     
 

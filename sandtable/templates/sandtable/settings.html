@@ -10,10 +10,47 @@
         <ul class="settings-list">
             <li>
                 <form action="#" method="get">
+                    <input type="submit" class="btn" value="Led fade" name="fadeButton">
+                </form>
+            </li>
+            <li>
+                <form action="#" method="get">
                     <input type="submit" class="btn" value="Home" name="homeButton">
+                </form>
+            </li>
+            <li>
+                <form action="#" method="get">
+                    <input type="submit" class="btn" value="Stop motors" name="stopButton">
+                </form>
+            </li>
+            <li>
+                <form action="#" method="get">
+                    <input type="submit" class="btn" value="Power off" name="powerButton">
+                </form>
+            </li>
+            <li>
+                <a>Motor speed:</a>
+                <form action="#" method="get" id="sliderForm">
+                    <input type="range" id="slider" min="0" max="100" value="0" name="speedSlider">
+                    <a id="sliderValue"></a>
                 </form>
             </li>
         </ul>
     </div>
+
+    <script>
+        var slider = document.getElementById("slider");
+        var value = document.getElementById("sliderValue");
+        value.innerHTML = slider.value;
+
+        slider.oninput = function() {
+            value.innerHTML = this.value;
+        }
+
+        slider.onpointerup = function() {
+            document.getElementById("sliderForm").submit();
+        }
+
+    </script>
 </main>
 {% endblock content %}

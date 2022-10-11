@@ -8,13 +8,16 @@
         <a style="font-size: 20px;">Length: {{ track.track_length }}</a>
     </div>
     <div class="track-info">
+        <form action="#" method="get">
+            <input type="submit" class="btn" value="Delete track" name="deleteTrack">
+        </form>
         <img src="{{ track.pic.url }}">
     </div>
-    <div>
+    <div class="center">
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form.field.as_hidden }}
-            <button type="submit">Add to queue</button>
+            <button class="btn" type="submit">Add to queue</button>
         </form>
     </div>
 </main>

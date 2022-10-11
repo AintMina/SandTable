@@ -1,19 +1,19 @@
 #include "Arduino.h"
-#include "driver.h"
-#include "angles.h"
-#include "leds.h"
+#include "driver.hpp"
+#include "angles.hpp"
+#include "leds.hpp"
 
 int spr = 600;
-int microstepping = 16;
+int microstepping = 8;
 float theta1_old = 0, theta2_old = M_PI;
 int draw_speed = 1;
 
 String led_track = "None";
-unsigned long led_time = millis();
-unsigned int led_speed = 100;
+unsigned long led_time = 0;
+unsigned int led_speed = 10;
 
-motor motor1(7, 4, 8, A6);
-motor motor2(6, 3, 8, A7);
+motor motor1(6, 3, 8, A6);
+motor motor2(7, 4, 8, A7);
 
 led leds(11, 9, 10, 5);
 
@@ -25,6 +25,7 @@ void setup() {
     Serial.flush();
     motor1.Stop();
     Serial.write("ready\n");
+    pinMode(13, OUTPUT);
 }
 
 void loop() {
@@ -129,9 +130,7 @@ void loop() {
             }
             else if(data[1] == 't' || data[1] == 'T') {
                 char* track = strtok(0, " ");
-                String led_track = String(track);
-
-                
+                led_track = String(track);
             }
         }
         else {
@@ -196,7 +195,7 @@ void loop() {
               theta1_old += (2*M_PI);
             }
 
-            // Send acknowledge
+            // Send the current position through serial
             angle = thetaFromArms(theta1_old, theta2_old);
             r = rFromArms(theta1_old, theta2_old);
             String angle_str = String(angle, 5);
@@ -209,7 +208,8 @@ void loop() {
     }
 
     if(millis() - led_time > led_speed) {
-        if(led_track.equalsIgnoreCase("colorFade")) {
+        if(led_track.equalsIgnoreCase("colorfade")) {
+            led_time = millis();
             leds.colorFade();
         }
     }

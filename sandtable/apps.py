@@ -7,4 +7,4 @@ class SandtableConfig(AppConfig):
 
     def ready(self):
         # Startup code here
-        print("Starting up...")
+        pass

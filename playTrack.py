@@ -3,7 +3,7 @@ import divideCoords, writeSerial
 
 
 def playTrack(track_name):
-    path = "media/" + track_name
+    path = "/home/pi/sand-table/media/" + track_name
 
     # Get the current coordinates
     writeSerial.writeToSerial('c get coords\n')
@@ -26,7 +26,7 @@ def playTrack(track_name):
         # Iterating lines
         for line in f:
             # If line is comment or line does not contain anything then continue to next line
-            if '#' in line or len(line) < 4:
+            if '#' in line or len(line) < 4 or "/" in line:
                 continue
             
             # Getting theta and rho from the line and changin them to float values

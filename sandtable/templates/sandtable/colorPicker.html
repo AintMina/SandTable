@@ -6,7 +6,7 @@
     <div class="header center">
         <a>Color picker</a>
     </div>
-    <div class="track-list-div">
+    <div class="track-list-div color-div">
         <div id="picker"></div>
         <div id="rgbw">
             <ul>
@@ -17,15 +17,13 @@
                         </span>
                     </a>
                 </li>
-                <li>
+                <li class="right">
                     <a>
                         <span class="dot green">G
                             <p id="green">{{ colors.g }}</p>
                         </span>
                     </a>
                 </li>
-            </ul>
-            <ul class="bottom">
                 <li>
                     <a>
                         <span class="dot blue">B
@@ -33,7 +31,7 @@
                         </span>
                     </a>
                 </li>
-                <li>
+                <li class="right">
                     <a>
                         <span class="dot white">W
                             <p id="white">{{ colors.w }}</p>
