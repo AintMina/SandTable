@@ -30,25 +30,44 @@
             </li>
             <li>
                 <a>Motor speed:</a>
-                <form action="#" method="get" id="sliderForm">
-                    <input type="range" id="slider" min="0" max="100" value="0" name="speedSlider">
-                    <a id="sliderValue"></a>
+                <form action="#" method="get" id="motorSliderForm">
+                    <input type="range" id="speedSlider" min="1" max="10" value={{ motorSpeed }} name="motorSpeedSlider">
+                    <a id="speedSliderValue"></a>
+                </form>
+            </li>
+            <li>
+                <a>Led speed:</a>
+                <form action="#" method="get" id="ledSliderForm">
+                    <input type="range" id="ledSlider" min="1" max="1000" value={{ ledSpeed }} name="ledSpeedSlider">
+                    <a id="ledSliderValue"></a>
                 </form>
             </li>
         </ul>
     </div>
 
     <script>
-        var slider = document.getElementById("slider");
-        var value = document.getElementById("sliderValue");
-        value.innerHTML = slider.value;
+        var speedSlider = document.getElementById("speedSlider");
+        var speedValue = document.getElementById("speedSliderValue");
+        speedValue.innerHTML = speedSlider.value;
 
-        slider.oninput = function() {
-            value.innerHTML = this.value;
+        speedSlider.oninput = function() {
+            speedValue.innerHTML = this.speedValue;
         }
 
-        slider.onpointerup = function() {
-            document.getElementById("sliderForm").submit();
+        speedSlider.onpointerup = function() {
+            document.getElementById("motorSliderForm").submit();
+        }
+
+        var ledSlider = document.getElementById("ledSlider");
+        var ledValue = document.getElementById("ledSliderValue");
+        ledValue.innerHTML = ledSlider.value;
+
+        ledSlider.oninput = function() {
+            ledValue.innerHTML = this.ledValue;
+        }
+
+        ledSlider.onpointerup = function() {
+            document.getElementById("ledSliderForm").submit();
         }
 
     </script>

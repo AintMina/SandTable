@@ -309,6 +309,9 @@ div#rgbw li.right {
     color: var(--text-secondary);
     font-size: 30px;
 }
-#slider {
+#speedSlider {
+    width: 80vw;
+}
+#ledSlider {
     width: 80vw;
 }

@@ -55,40 +55,46 @@ void loop() {
                 theta2_old = M_PI;
                 Serial.write("0.0000 0.0000\n");
             }
-			// Get command
-			else if(command_str.equalsIgnoreCase("get")) {
-				char* get_command = strtok(0, " ");
-				String get = String(get_command);
+          // Get command
+          else if(command_str.equalsIgnoreCase("get")) {
+            char* get_command = strtok(0, " ");
+            String get = String(get_command);
 
-				// Get coordinates command
-				if(get.equalsIgnoreCase("coords")) {
-					float angle, r;
-					if(theta2_old == M_PI) {
-						angle = theta1_old;
-						r = 0;
-					}
-					else {
-						angle = thetaFromArms(theta1_old, theta2_old);
-						r = rFromArms(theta1_old, theta2_old);
-					}
-					String angle_str = String(angle, 5);
-					String r_str = String(r, 5);
-					String output_string = angle_str + " " + r_str + "\n";
-					char output[output_string.length() +1];
-					output_string.toCharArray(output, sizeof(output));
-					Serial.write(output);
-				}
-			}
-			// Set command
-			else if(command_str.equalsIgnoreCase("set")) {
-				char* set_command = strtok(0, " ");
-				String set = String(set_command);
+            // Get coordinates command
+            if(get.equalsIgnoreCase("coords")) {
+              float angle, r;
+              if(theta2_old == M_PI) {
+                angle = theta1_old;
+                r = 0;
+              }
+              else {
+                angle = thetaFromArms(theta1_old, theta2_old);
+                r = rFromArms(theta1_old, theta2_old);
+              }
+              String angle_str = String(angle, 5);
+              String r_str = String(r, 5);
+              String output_string = angle_str + " " + r_str + "\n";
+              char output[output_string.length() +1];
+              output_string.toCharArray(output, sizeof(output));
+              Serial.write(output);
+            }
+          }
+          // Set command
+          else if(command_str.equalsIgnoreCase("set")) {
+            char* set_command = strtok(0, " ");
+            String set = String(set_command);
 
-				// Get coordinates command
-				if(set.equalsIgnoreCase("speed")) {
-					
-				}
-			}
+            // Set draw speed
+            if(set.equalsIgnoreCase("speed")) {
+                char* value = strtok(0, " ");
+                draw_speed = atoi(value);
+            }
+            // Set draw speed
+            else if(set.equalsIgnoreCase("ledspeed")) {
+                char* value = strtok(0, " ");
+                led_speed = atoi(value);
+            }
+          }
         }
         // Move motors separetly
         else if(data[0] == 'm' || data[0] == 'M') {

@@ -119,6 +119,11 @@ def uploadTracks(request):
 
 
 def settings(request):
+    settings_data = Settings.objects.get(id=0)
+    motor_speed = settings_data.motor_speed
+
+    led_data = RGBW.objects.get(id=1)
+    led_speed = led_data.led_speed
 
     # Button to home motors
     if(request.GET.get('homeButton')):
@@ -145,12 +150,24 @@ def settings(request):
         return redirect('sandtable:settings')
 
     # Motor speed slider
-    elif(request.GET.get('speedSlider')):
-        slider_value = request.GET.get('speedSlider')
+    elif(request.GET.get('motorSpeedSlider')):
+        speed = request.GET.get('motorSpeedSlider')
+        settings_data.motor_speed = int(speed)
+        settings_data.save()
+        writeSerial.writeToSerial("c set speed " + speed)
 
         return redirect('sandtable:settings')
 
-    context = {}
+    # Motor speed slider
+    elif(request.GET.get('ledSpeedSlider')):
+        speed = request.GET.get('ledSpeedSlider')
+        led_data.led_speed = int(speed)
+        led_data.save()
+        writeSerial.writeToSerial("c set ledspeed " + speed)
+
+        return redirect('sandtable:settings')
+
+    context = { 'motorSpeed': motor_speed, 'ledSpeed': led_speed }
 
     return render(request, 'sandtable/settings.html', context)
 
