@@ -158,7 +158,7 @@ def settings(request):
 
         return redirect('sandtable:settings')
 
-    # Motor speed slider
+    # Led speed slider
     elif(request.GET.get('ledSpeedSlider')):
         speed = request.GET.get('ledSpeedSlider')
         led_data.led_speed = int(speed)
