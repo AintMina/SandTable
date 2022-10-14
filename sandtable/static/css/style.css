@@ -315,3 +315,9 @@ div#rgbw li.right {
 #ledSlider {
     width: 80vw;
 }
+#ledIntensitySlider {
+    width: 80vw;
+}
+#ledSaturationSlider {
+    width: 80vw;
+}

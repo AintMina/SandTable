@@ -15,6 +15,10 @@ Library to get angles for 2-joint robotic arm.
 // Get angles for arm 2 from polar coordinates
 float polarGetTheta2(float theta, float r) {
 
+    if(r == 0) {
+        return M_PI;
+    }
+
     // Math (had to break it up to multiple variables)
     float s1 = pow(r, 2) - 0.5;
     float q2 = acos(s1 / 0.5);
@@ -23,7 +27,11 @@ float polarGetTheta2(float theta, float r) {
 }
 
 // Get angles for arm 1 from polar coordinates
-float polarGetTheta1(float theta2, float theta, float r) {
+float polarGetTheta1(float theta2, float theta, float r, bool inverted, float theta1_old) {
+
+    if(r == 0) {
+        return theta1_old;
+    }
 
     // Checking if denominator is zero
     float s2 = 0.5 + 0.5 * cos(theta2);
@@ -34,8 +42,14 @@ float polarGetTheta1(float theta2, float theta, float r) {
     // Math
     float s1 = 0.5 * sin(theta2);
     float alpha = atan(s1 / s2);
-    float q1 = theta - alpha;
-    
+    float q1 = 0;
+
+    if(!inverted) {
+        q1 = theta - alpha;
+    }
+    else {
+        q1 = theta + alpha;
+    }
 
     return q1;
 }

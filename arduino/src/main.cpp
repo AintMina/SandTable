@@ -5,12 +5,15 @@
 
 int spr = 600;
 int microstepping = 8;
-float theta1_old = 0, theta2_old = M_PI;
-int draw_speed = 1;
+float theta1_old = 0, theta2_old = M_PI, angle_old = 0;
+bool inverted = false;
 
 String led_track = "None";
 unsigned long led_time = 0;
-unsigned int led_speed = 10;
+unsigned int led_speed = 100;
+float led_intensity = 1.0;
+float led_saturation = 0.0;
+int draw_speed = 1;
 
 motor motor1(6, 3, 8, A6);
 motor motor2(7, 4, 8, A7);
@@ -89,10 +92,22 @@ void loop() {
                 char* value = strtok(0, " ");
                 draw_speed = atoi(value);
             }
-            // Set draw speed
+            // Set led speed
             else if(set.equalsIgnoreCase("ledspeed")) {
                 char* value = strtok(0, " ");
                 led_speed = atoi(value);
+            }
+            // Set led intensity
+            else if(set.equalsIgnoreCase("ledintensity")) {
+                char* value = strtok(0, " ");
+                int temp_value = atoi(value);
+                led_intensity = float(temp_value) / 100.0;
+            }
+            // Set led saturation
+            else if(set.equalsIgnoreCase("ledsaturation")) {
+                char* value = strtok(0, " ");
+                int temp_value = atoi(value);
+                led_saturation = float(temp_value) / 100.0;
             }
           }
         }
@@ -147,12 +162,27 @@ void loop() {
             // Splitting the input
             char* angle_char = strtok(data, " ");
             char* r_char = strtok(0, " ");
-            float angle = atof(angle_char);
             float r = atof(r_char);
+            float angle = 0;
+            if(r == 0) {
+              angle = angle_old;
+            }
+            else {
+              angle = atof(angle_char);
+            }
+
+            // Checking if arm goes through origin
+            float delta_angle = abs(angle - angle_old);
+            while(delta_angle > 6) {
+              delta_angle -= 3.14159265358979323846 * 2;
+            }
+            if(delta_angle < 3.2 && delta_angle > 3.1 && abs(r) < 0.03) {
+              inverted != inverted;
+            }
 
             // Getting the angles for the arms
             float theta2 = polarGetTheta2(angle, r);
-            float theta1 = polarGetTheta1(theta2, angle, r);
+            float theta1 = polarGetTheta1(theta2, angle, r, inverted, theta1_old);
 
             // Getting the change of angles
             float delta_theta1 = deltaAngles(theta1, theta1_old);
@@ -210,13 +240,15 @@ void loop() {
             char output[output_string.length() +1];
             output_string.toCharArray(output, sizeof(output));
             Serial.write(output);
+
+            angle_old = angle;
         }
     }
 
     if(millis() - led_time > led_speed) {
         if(led_track.equalsIgnoreCase("colorfade")) {
             led_time = millis();
-            leds.colorFade();
+            leds.colorFade(led_intensity, led_saturation);
         }
     }
 }

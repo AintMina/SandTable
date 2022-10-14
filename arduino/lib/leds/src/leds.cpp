@@ -41,15 +41,16 @@ void led::setValue(int r, int g, int b, int w) {
     analogWrite(w_pin, w);
 }
 
-void led::colorFade() {
+void led::colorFade(float intensity, float saturation) {
     int rgb[3] = {r_pin, g_pin, b_pin};
     int last_color = color - 1;
     if (last_color == -1) {
         last_color = 2;
     }
 
-    analogWrite(rgb[color], counter);
-    analogWrite(rgb[last_color], 255 - counter);
+    analogWrite(w_pin, int(255 * saturation));
+    analogWrite(rgb[color], int(counter * intensity));
+    analogWrite(rgb[last_color], int((255 - counter) * intensity));
     counter++;
 
     if (counter > 255) {

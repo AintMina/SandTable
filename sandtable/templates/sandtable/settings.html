@@ -42,6 +42,20 @@
                     <a id="ledSliderValue"></a>
                 </form>
             </li>
+            <li>
+                <a>Led intensity:</a>
+                <form action="#" method="get" id="ledIntensitySliderForm">
+                    <input type="range" id="ledIntensitySlider" min="0" max="100" value={{ ledIntensity }} name="ledIntensitySlider">
+                    <a id="ledIntensitySliderValue"></a>
+                </form>
+            </li>
+            <li>
+                <a>Led saturation:</a>
+                <form action="#" method="get" id="ledSaturationSliderForm">
+                    <input type="range" id="ledSaturationSlider" min="0" max="100" value={{ ledSaturation }} name="ledSaturationSlider">
+                    <a id="ledSaturationSliderValue"></a>
+                </form>
+            </li>
         </ul>
     </div>
 
@@ -68,6 +82,30 @@
 
         ledSlider.onpointerup = function() {
             document.getElementById("ledSliderForm").submit();
+        }
+
+        var ledIntensitySlider = document.getElementById("ledIntensitySlider");
+        var ledIntensityValue = document.getElementById("ledIntensitySliderValue");
+        ledIntensityValue.innerHTML = ledIntensitySlider.value;
+
+        ledIntensitySlider.oninput = function() {
+            ledIntensityValue.innerHTML = this.value;
+        }
+
+        ledIntensitySlider.onpointerup = function() {
+            document.getElementById("ledIntensitySliderForm").submit();
+        }
+
+        var ledSaturationSlider = document.getElementById("ledSaturationSlider");
+        var ledSaturationValue = document.getElementById("ledSaturationSliderValue");
+        ledSaturationValue.innerHTML = ledSaturationSlider.value;
+
+        ledSaturationSlider.oninput = function() {
+            ledSaturationValue.innerHTML = this.value;
+        }
+
+        ledSaturationSlider.onpointerup = function() {
+            document.getElementById("ledSaturationSliderForm").submit();
         }
 
     </script>

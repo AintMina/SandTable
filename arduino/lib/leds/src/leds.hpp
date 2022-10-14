@@ -19,7 +19,7 @@ class led {
 
     void Off();
     void setValue(int r, int g, int b, int w);
-    void colorFade();
+    void colorFade(float intensity, float saturation);
     void allFade();
 
 };

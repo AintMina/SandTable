@@ -26,6 +26,8 @@ class RGBW(models.Model):
     led_track = models.CharField(max_length=100, default='None')
     changed = models.BooleanField(default=False)
     led_speed = models.IntegerField(default=1)
+    led_intensity = models.IntegerField(default=100)
+    led_saturation = models.IntegerField(default=0)
 
 
 # Settings

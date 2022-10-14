@@ -58,8 +58,8 @@ def track(request, track_id):
             new_queue_track.save()
 
             # Start playing
-            # if not checkProcesses("PlayQueue.py"):
-            #     os.system("/bin/python /home/pi/sand-table/PlayQueue.py &")
+            if not checkProcesses("PlayQueue.py"):
+                os.system("/bin/python /home/pi/sand-table/PlayQueue.py &")
             
             return redirect('sandtable:tracks')
     
@@ -124,6 +124,8 @@ def settings(request):
 
     led_data = RGBW.objects.get(id=1)
     led_speed = led_data.led_speed
+    led_intensity = led_data.led_intensity
+    led_saturation = led_data.led_saturation
 
     # Button to home motors
     if(request.GET.get('homeButton')):
@@ -151,23 +153,41 @@ def settings(request):
 
     # Motor speed slider
     elif(request.GET.get('motorSpeedSlider')):
-        speed = request.GET.get('motorSpeedSlider')
-        settings_data.motor_speed = int(speed)
+        value = request.GET.get('motorSpeedSlider')
+        settings_data.motor_speed = int(value)
         settings_data.save()
-        writeSerial.writeToSerial("c set speed " + speed)
+        writeSerial.writeToSerial("c set speed " + value)
 
         return redirect('sandtable:settings')
 
     # Led speed slider
     elif(request.GET.get('ledSpeedSlider')):
-        speed = request.GET.get('ledSpeedSlider')
-        led_data.led_speed = int(speed)
+        value = request.GET.get('ledSpeedSlider')
+        led_data.led_speed = int(value)
         led_data.save()
-        writeSerial.writeToSerial("c set ledspeed " + speed)
+        writeSerial.writeToSerial("c set ledspeed " + value)
 
         return redirect('sandtable:settings')
 
-    context = { 'motorSpeed': motor_speed, 'ledSpeed': led_speed }
+    # Led intensity slider
+    elif(request.GET.get('ledIntensitySlider')):
+        value = request.GET.get('ledIntensitySlider')
+        led_data.led_intensity = int(value)
+        led_data.save()
+        writeSerial.writeToSerial("c set ledintensity " + value)
+
+        return redirect('sandtable:settings')
+
+    # Led saturation slider
+    elif(request.GET.get('ledSaturationSlider')):
+        value = request.GET.get('ledSaturationSlider')
+        led_data.led_saturation = int(value)
+        led_data.save()
+        writeSerial.writeToSerial("c set ledsaturation " + value)
+
+        return redirect('sandtable:settings')
+
+    context = { 'motorSpeed': motor_speed, 'ledSpeed': led_speed, 'ledIntensity': led_intensity, 'ledSaturation': led_saturation }
 
     return render(request, 'sandtable/settings.html', context)
 
