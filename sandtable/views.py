@@ -8,7 +8,6 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
 
-# Create your views here.
 def index(request):
     playing = checkProcesses("PlayQueue.py")
     queue = Queue.objects.all()
@@ -131,8 +130,25 @@ def settings(request):
     if(request.GET.get('homeButton')):
         checkProcesses("PlayQueue.py", True)
         writeSerial.writeToSerial("c home")
-        #writeSerial.writeToSerial("lt colorFade")
+        settings_data.r = 0.0
+        settings_data.theta = 0.0
+        settings_data.save()
+
+        writeSerial.writeToSerial("m2 " + str(settings_data.calibrate))
         
+        return redirect('sandtable:settings')
+
+    # Button to calibrate
+    if(request.GET.get('calibrateButton')):
+        return redirect('sandtable:calibrate')
+
+    # Button to zero
+    if(request.GET.get('updateButton')):
+        checkProcesses("PlayQueue.py", True)
+        r = str(settings_data.r)
+        theta = str(settings_data.theta)
+        writeSerial.writeToSerial("c set coords " + theta + " " + r)
+
         return redirect('sandtable:settings')
 
     # Button to stop motors
@@ -148,7 +164,12 @@ def settings(request):
 
     # Button to do led fade
     elif(request.GET.get('fadeButton')):
-        writeSerial.writeToSerial("lt colorFade")
+        led_data.led_track = "colorfade"
+        led_data.save()
+        writeSerial.writeToSerial("c set ledspeed " + str(led_data.led_speed))
+        writeSerial.writeToSerial("c set ledintensity " + str(led_data.led_intensity))
+        writeSerial.writeToSerial("c set ledsaturation " + str(led_data.led_saturation))
+        writeSerial.writeToSerial("lt colorfade")
         return redirect('sandtable:settings')
 
     # Motor speed slider
@@ -191,6 +212,38 @@ def settings(request):
 
     return render(request, 'sandtable/settings.html', context)
 
+def calibrate(request):
+    settings_data = Settings.objects.get(id=0)
+    
+    # Button to calibrate
+    if(request.GET.get('+1')):
+        writeSerial.writeToSerial("m2 1")
+        settings_data.calibrate += 1
+        settings_data.save()
+        return redirect('sandtable:calibrate')
+
+    # Button to calibrate
+    if(request.GET.get('-1')):
+        writeSerial.writeToSerial("m2 -1")
+        settings_data.calibrate -= 1
+        settings_data.save()
+        return redirect('sandtable:calibrate')
+    
+    # Button to calibrate
+    if(request.GET.get('+10')):
+        writeSerial.writeToSerial("m2 10")
+        settings_data.calibrate += 10
+        settings_data.save()
+        return redirect('sandtable:calibrate')
+
+    # Button to calibrate
+    if(request.GET.get('-10')):
+        writeSerial.writeToSerial("m2 -10")
+        settings_data.calibrate -= 10
+        settings_data.save()
+        return redirect('sandtable:calibrate')
+
+    return render(request, 'sandtable/calibrate.html')
 
 @csrf_exempt
 def color(request):

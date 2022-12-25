@@ -1,8 +1,13 @@
 import sys, time
+import sqlite3
 import divideCoords, writeSerial
 
 
 def playTrack(track_name):
+    # Connecting to the database
+    connection = sqlite3.connect('/home/pi/sand-table/db.sqlite3')
+    cursor = connection.cursor()
+
     path = "/home/pi/sand-table/media/" + track_name
 
     # Get the current coordinates
@@ -78,6 +83,9 @@ def playTrack(track_name):
 
             input_temp = input.split(' ')
             coords = [float(input_temp[0]), float(input_temp[1])]
+            
+            cursor.execute("UPDATE sandtable_settings SET r = ?, theta = ? WHERE id = 0", (coords[0],coords[1]))
+            connection.commit()
 
     # Delay just in case
     time.sleep(0.1)

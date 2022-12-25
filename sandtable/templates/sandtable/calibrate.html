@@ -1,0 +1,31 @@
+{% extends "sandtable/base.html" %}
+{% load static %}
+
+{% block content %}
+<main>
+    <div class="track-list-div">
+        <ul class="settings-list">
+            <li>
+                <form action="#" method="get">
+                    <input type="submit" class="btn" value="+1" name="+1">
+                </form>
+            </li>
+            <li>
+                <form action="#" method="get">
+                    <input type="submit" class="btn" value="-1" name="-1">
+                </form>
+            </li>
+            <li>
+                <form action="#" method="get">
+                    <input type="submit" class="btn" value="+10" name="+10">
+                </form>
+            </li>
+            <li>
+                <form action="#" method="get">
+                    <input type="submit" class="btn" value="-10" name="-10">
+                </form>
+            </li>
+        </ul>
+    </div>
+</main>
+{% endblock content %}

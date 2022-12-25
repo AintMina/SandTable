@@ -8,10 +8,10 @@ int microstepping = 8;
 float theta1_old = 0, theta2_old = M_PI, angle_old = 0;
 bool inverted = false;
 
-String led_track = "None";
+String led_track = "colorfade";
 unsigned long led_time = 0;
-unsigned int led_speed = 100;
-float led_intensity = 1.0;
+unsigned int led_speed = 20;
+float led_intensity = 0.1;
 float led_saturation = 0.0;
 int draw_speed = 1;
 
@@ -109,6 +109,13 @@ void loop() {
                 int temp_value = atoi(value);
                 led_saturation = float(temp_value) / 100.0;
             }
+            // Set coordinates
+            else if(set.equalsIgnoreCase("coords")) {
+                char* r = strtok(0, " ");
+                char* theta = strtok(0, " ");
+                theta2_old = polarGetTheta2(atof(theta), atof(r));
+                theta1_old = polarGetTheta1(theta2_old, atof(theta), atof(r), inverted, atof(theta));
+            }
           }
         }
         // Move motors separetly
@@ -124,8 +131,8 @@ void loop() {
                 }
                 motor1.setDirection(steps);
                 motor1.Step(steps);
-                theta1_old += thetaFromSteps(steps, microstepping);
-                theta2_old += thetaFromSteps(-steps, microstepping);
+                //theta1_old += thetaFromSteps(steps, microstepping);
+                //theta2_old += thetaFromSteps(-steps, microstepping);
             }
             else if(data[1] == '2'){
                 // Check that motors are enabled
@@ -134,7 +141,7 @@ void loop() {
                 }
                 motor2.setDirection(steps);
                 motor2.Step(steps);
-                theta2_old += thetaFromSteps(steps, microstepping);
+                //theta2_old += thetaFromSteps(steps, microstepping);
             }
         }
         // Led commands

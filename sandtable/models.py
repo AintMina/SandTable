@@ -33,3 +33,6 @@ class RGBW(models.Model):
 # Settings
 class Settings(models.Model):
     motor_speed = models.IntegerField(default=1)
+    r = models.FloatField(default=0.0)
+    theta = models.FloatField(default=0.0)
+    calibrate = models.IntegerField(default=0)

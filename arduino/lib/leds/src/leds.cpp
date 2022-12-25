@@ -48,7 +48,7 @@ void led::colorFade(float intensity, float saturation) {
         last_color = 2;
     }
 
-    analogWrite(w_pin, int(255 * saturation));
+    analogWrite(w_pin, int(255 * saturation * intensity));
     analogWrite(rgb[color], int(counter * intensity));
     analogWrite(rgb[last_color], int((255 - counter) * intensity));
     counter++;
