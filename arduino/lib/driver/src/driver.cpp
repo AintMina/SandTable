@@ -68,16 +68,24 @@ void motor::Step(int steps, float stepdelay = 1) {
 // motor1 needs to have more steps!
 void dualSteps(int step1, motor motor1, int step2, motor motor2, float speed) {
     int v = step1 / step2;      // Variable to figure out step ratio
+    float v_f = float(step1) / float(step2);
+    v_f -= float(v);            // Variable to figure out the remainder of step ratio
     int counter = 0;
     int step2_counter = 0;
+    float extra_counter = 0.0;
 
     for (int i = 0; i < step1; i++) {
         motor1.Step(1, speed);
         counter++;
-        if ((counter == v) && (step2_counter < step2)) {
+        if ((counter >= v) && (step2_counter < step2)) {
+            if (extra_counter > 1.0) {
+                extra_counter -= v;
+                continue;
+            }
             motor2.Step(1, speed);
             step2_counter++;
             counter = 0;
+            extra_counter += v_f;
         }
     }
 
