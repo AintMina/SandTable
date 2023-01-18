@@ -1,5 +1,5 @@
 # Kinetic sand art table
-<img src="/Pictures/1674052924095.jpg" width="400"><img src="/Pictures/1674053047425.jpg" width="400" align="right">
+<img src="/Pictures/1674052924095.jpg" width="400"><img src="/Pictures/1674053047425.jpg" width="400">
 
 This is my kinetic sand art coffee table project I've been working on. The idea is derived from Sisyphus industries product and motivation is from [grammesm](https://alwaystinkering.com/2020/01/14/diy-kinetic-sand-art-table/) which was inspired from [Rob Dobson’s](https://robdobson.com/2018/08/a-new-sandbot/) version.
 
