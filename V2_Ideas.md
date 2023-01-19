@@ -13,6 +13,7 @@
 # Motors
 - inversing inverse kinematics
 - normal steps or AccelStepper or both
+- UART microstepping?
 
 # LEDs
 - TLC5947 / TLC59711 - 12bit / 16bit PWM driver
