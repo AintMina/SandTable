@@ -16,8 +16,8 @@
 - UART microstepping?
 
 # LEDs
-- TLC5947 / TLC59711 - 12bit / 16bit PWM driver
-- controlled by Arduino or RPi or own trinket
+- ~~TLC5947 / TLC59711 - 12bit / 16bit PWM driver~~
+- controlled by Arduino or RPi or own MCU
 - more animations
 
 # Extra
