@@ -24,7 +24,8 @@
 - gcode / cartesian support
 - UI finetuning
 - save settings in EEPROM
-- RTOS?
+- RTOS
+- Clean file hierarchia
 
 # Hardware
 - Arduino nano RP2040? dual core possibility
