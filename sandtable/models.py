@@ -23,7 +23,7 @@ class RGBW(models.Model):
     g = models.IntegerField(default=0)
     b = models.IntegerField(default=0)
     w = models.IntegerField(default=0)
-    led_track = models.CharField(max_length=100, default='None')
+    led_track = models.IntegerField(default=0)
     changed = models.BooleanField(default=False)
     led_speed = models.IntegerField(default=1)
     led_intensity = models.IntegerField(default=100)

@@ -2,29 +2,87 @@ from xml.dom import ValidationErr
 from django.shortcuts import render, redirect
 from .models import *
 from .forms import *
-import thr2png, os, psutil, writeSerial
+import thr2png, os, psutil, writeSerial, signal
 
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
 
+# Commands
+COMMAND_STOP = 0
+COMMAND_ANGLE = 1
+COMMAND_R = 2
+COMMAND_X = 3
+COMMAND_Y = 4
+COMMAND_HOME = 5
+COMMAND_UPDATE_ANGLE = 6
+COMMAND_UPDATE_R = 7
+COMMAND_M1_STEP = 8
+COMMAND_M2_STEP = 9
+COMMAND_MOTOR_SPEED = 10
+COMMAND_LED_TRACK = 11
+COMMAND_LED_SPEED = 12
+COMMAND_LED_INTENSITY = 13
+COMMAND_LED_SATURATION = 14
+COMMAND_LED_R = 15
+COMMAND_LED_G = 16
+COMMAND_LED_B = 17
+COMMAND_LED_W = 18
+COMMAND_GET_ANGLE = 19
+COMMAND_GET_R = 20
+COMMAND_RESET = 21
+
+
+playing = 0
+
+
 def index(request):
-    playing = checkProcesses("PlayQueue.py")
+    global playing
     queue = Queue.objects.all()
     track_name = ""
     if len(queue) > 0:
         track = queue[0].file
         track_name = track.split('/')[-1].replace(".thr", '')
+    
+    # Erase button
+    if(request.GET.get('eraseButton')):
+        pid = checkProcesses("PlayQueue.py")
+
+        if not pid:
+            print("Not running")
+        else:
+            os.kill(pid, signal.SIGTERM)
+            
+        return redirect('sandtable:index')
 
     # Button to start playing
     if(request.GET.get('playButton')):
 
         # Start playing
-        if not checkProcesses("PlayQueue.py"):
+        pid = checkProcesses("PlayQueue.py")
+
+        if not pid:
             os.system("/bin/python /home/pi/sand-table/PlayQueue.py &")
         else:
-            checkProcesses("PlayQueue.py", True)
+            os.kill(pid, signal.SIGUSR1)
 
+        if playing == 0:
+            playing = 1
+        else:
+            playing = 0
+
+        return redirect('sandtable:index')
+    
+    # Next button
+    if(request.GET.get('nextButton')):
+        pid = checkProcesses("PlayQueue.py")
+
+        if not pid:
+            print("Not running")
+        else:
+            os.kill(pid, signal.SIGUSR2)
+
+        print("next")
         return redirect('sandtable:index')
 
     context = { 'playing': playing, 'track_name': track_name  }
@@ -129,12 +187,13 @@ def settings(request):
     # Button to home motors
     if(request.GET.get('homeButton')):
         checkProcesses("PlayQueue.py", True)
-        writeSerial.writeToSerial("c home")
+        writeSerial.writeToSerial(COMMAND_HOME, 0)
         settings_data.r = 0.0
         settings_data.theta = 0.0
         settings_data.save()
+        # print(settings_data.calibrate)
 
-        writeSerial.writeToSerial("m2 " + str(settings_data.calibrate))
+        writeSerial.writeToSerial(COMMAND_M2_STEP, settings_data.calibrate)
         
         return redirect('sandtable:settings')
 
@@ -145,31 +204,43 @@ def settings(request):
     # Button to zero
     if(request.GET.get('updateButton')):
         checkProcesses("PlayQueue.py", True)
-        r = str(settings_data.r)
-        theta = str(settings_data.theta)
-        writeSerial.writeToSerial("c set coords " + theta + " " + r)
+        r = settings_data.r
+        theta = settings_data.theta
+        writeSerial.writeToSerial(COMMAND_UPDATE_ANGLE, theta)
+        writeSerial.writeToSerial(COMMAND_UPDATE_R, r)
 
         return redirect('sandtable:settings')
 
     # Button to stop motors
     elif(request.GET.get('stopButton')):
         checkProcesses("PlayQueue.py", True)
-        writeSerial.writeToSerial("c stop")
+        writeSerial.writeToSerial(COMMAND_STOP, 0)
         return redirect('sandtable:settings')
 
     # Button to power down the pi
     elif(request.GET.get('powerButton')):
-        os.system("sudo poweroff")
+        writeSerial.writeToSerial(COMMAND_GET_ANGLE, 0)
+        angle = writeSerial.waitForResponse()
+        writeSerial.writeToSerial(COMMAND_GET_R, 0)
+        r = writeSerial.waitForResponse()
+        settings_data.theta = float(angle)
+        settings_data.r = float(r)
+        os.system("sudo shutdown -h")
+        return redirect('sandtable:settings')
+    
+    # Button to reset core 1
+    elif(request.GET.get('resetButton')):
+        writeSerial.writeToSerial(COMMAND_RESET, 0)
         return redirect('sandtable:settings')
 
     # Button to do led fade
     elif(request.GET.get('fadeButton')):
-        led_data.led_track = "colorfade"
+        led_data.led_track = 5
         led_data.save()
-        writeSerial.writeToSerial("c set ledspeed " + str(led_data.led_speed))
-        writeSerial.writeToSerial("c set ledintensity " + str(led_data.led_intensity))
-        writeSerial.writeToSerial("c set ledsaturation " + str(led_data.led_saturation))
-        writeSerial.writeToSerial("lt colorfade")
+        writeSerial.writeToSerial(COMMAND_LED_SPEED, int(led_data.led_speed))
+        writeSerial.writeToSerial(COMMAND_LED_INTENSITY, float(led_data.led_intensity) / 100.0)
+        writeSerial.writeToSerial(COMMAND_LED_SATURATION, float(led_data.led_saturation) / 100.0)
+        writeSerial.writeToSerial(COMMAND_LED_TRACK, 5)
         return redirect('sandtable:settings')
 
     # Motor speed slider
@@ -177,7 +248,7 @@ def settings(request):
         value = request.GET.get('motorSpeedSlider')
         settings_data.motor_speed = int(value)
         settings_data.save()
-        writeSerial.writeToSerial("c set speed " + value)
+        writeSerial.writeToSerial(COMMAND_MOTOR_SPEED, int(value))
 
         return redirect('sandtable:settings')
 
@@ -186,7 +257,7 @@ def settings(request):
         value = request.GET.get('ledSpeedSlider')
         led_data.led_speed = int(value)
         led_data.save()
-        writeSerial.writeToSerial("c set ledspeed " + value)
+        writeSerial.writeToSerial(COMMAND_LED_SPEED, int(value))
 
         return redirect('sandtable:settings')
 
@@ -195,7 +266,7 @@ def settings(request):
         value = request.GET.get('ledIntensitySlider')
         led_data.led_intensity = int(value)
         led_data.save()
-        writeSerial.writeToSerial("c set ledintensity " + value)
+        writeSerial.writeToSerial(COMMAND_LED_INTENSITY,float(value) / 100.0)
 
         return redirect('sandtable:settings')
 
@@ -204,7 +275,7 @@ def settings(request):
         value = request.GET.get('ledSaturationSlider')
         led_data.led_saturation = int(value)
         led_data.save()
-        writeSerial.writeToSerial("c set ledsaturation " + value)
+        writeSerial.writeToSerial(COMMAND_LED_SATURATION, float(value) / 100.0)
 
         return redirect('sandtable:settings')
 
@@ -217,28 +288,28 @@ def calibrate(request):
     
     # Button to calibrate
     if(request.GET.get('+1')):
-        writeSerial.writeToSerial("m2 1")
+        writeSerial.writeToSerial(COMMAND_M2_STEP, 1)
         settings_data.calibrate += 1
         settings_data.save()
         return redirect('sandtable:calibrate')
 
     # Button to calibrate
     if(request.GET.get('-1')):
-        writeSerial.writeToSerial("m2 -1")
+        writeSerial.writeToSerial(COMMAND_M2_STEP, -1)
         settings_data.calibrate -= 1
         settings_data.save()
         return redirect('sandtable:calibrate')
     
     # Button to calibrate
     if(request.GET.get('+10')):
-        writeSerial.writeToSerial("m2 10")
+        writeSerial.writeToSerial(COMMAND_M2_STEP, 10)
         settings_data.calibrate += 10
         settings_data.save()
         return redirect('sandtable:calibrate')
 
     # Button to calibrate
     if(request.GET.get('-10')):
-        writeSerial.writeToSerial("m2 -10")
+        writeSerial.writeToSerial(COMMAND_M2_STEP, -10)
         settings_data.calibrate -= 10
         settings_data.save()
         return redirect('sandtable:calibrate')
@@ -270,10 +341,10 @@ def color(request):
             newcolor.changed = True
             newcolor.save()
 
-            # Inserting RGBW values into a string and then writing it to serial
-            values = "{} {} {} {}".format(newcolor.r, newcolor.g, newcolor.b, newcolor.w)
-            writeSerial.writeToSerial("lt none")
-            writeSerial.writeToSerial("lc " + values)
+            writeSerial.writeToSerial(COMMAND_LED_R, newcolor.r)
+            writeSerial.writeToSerial(COMMAND_LED_G, newcolor.g)
+            writeSerial.writeToSerial(COMMAND_LED_B, newcolor.b)
+            writeSerial.writeToSerial(COMMAND_LED_W, newcolor.w)
 
             return HttpResponse('')
 
@@ -302,10 +373,10 @@ def color(request):
             colors.changed = True
             colors.save()
 
-            # Inserting RGBW values into a string and then writing it to serial
-            values = "{} {} {} {}".format(colors.r, colors.g, colors.b, colors.w)
-            writeSerial.writeToSerial("lt none")
-            writeSerial.writeToSerial("lc " + values)
+            writeSerial.writeToSerial(COMMAND_LED_R, int(colors.r))
+            writeSerial.writeToSerial(COMMAND_LED_G, int(colors.g))
+            writeSerial.writeToSerial(COMMAND_LED_B, int(colors.b))
+            writeSerial.writeToSerial(COMMAND_LED_W, int(colors.w))
 
             return HttpResponse('')
         
@@ -327,7 +398,7 @@ def checkProcesses(name, kill=False):
                         if kill:
                             proc.kill()
 
-                        return True
+                        return proc.pid
         except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
             pass
     return False

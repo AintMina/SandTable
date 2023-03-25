@@ -1,8 +1,8 @@
 /**
  * 
  Author: AintMina
- Date: 11.10.2022
- Version 0.1
+ Date: 20.02.2023
+ Version 1.5
 
  A driver for driving stepper motors for arduino with CNC-shield.
 
@@ -20,7 +20,7 @@ class motor {
     void Stop();
     void Enable();
     void setDirection(int steps);
-    void Step(int steps, float stepdelay = 1);
+    void Step(int steps, float stepdelay);
 };
 
 void dualSteps(int step1, motor motor1, int step2, motor motor2, float speed);

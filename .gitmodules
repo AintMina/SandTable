@@ -1,0 +1,3 @@
+[submodule "arduino/include/pico-sdk"]
+	path = arduino/include/pico-sdk
+	url = https://github.com/raspberrypi/pico-sdk

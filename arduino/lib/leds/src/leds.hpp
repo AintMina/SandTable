@@ -14,13 +14,17 @@
 class led {
     public:
     int r_pin, g_pin, b_pin, w_pin;
-    int counter, color;
+	int r_num, g_num, b_num, w_num;
+    int counter, color, resolution, cycle_wrap, dir;
+	float intensity, saturation;
     led(int r_p, int g_p, int b_p, int w_p);
 
     void Off();
-    void setValue(int r, int g, int b, int w);
-    void colorFade(float intensity, float saturation);
-    void allFade();
+	int SetCounter(int directional);
+	void SetValue(int color, int value);
+    void SetValues(int r, int g, int b, int w);
+    void ColorFade();
+	void OneColorFade(int color);
 
 };
 

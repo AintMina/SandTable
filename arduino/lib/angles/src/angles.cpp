@@ -1,8 +1,8 @@
 /*
 
 Author: AintMina
-Date: 25.3.2021
-Version 0.5
+Date: 21.02.2023
+Version 1.5
  
 Library to get angles for 2-joint robotic arm.
 
@@ -12,7 +12,9 @@ Library to get angles for 2-joint robotic arm.
 #include "angles.hpp"
 
 
-// Get angles for arm 2 from polar coordinates
+/*
+	Get angles for arm 2 from polar coordinates
+*/
 float polarGetTheta2(float theta, float r) {
 
     if(r == 0) {
@@ -26,7 +28,10 @@ float polarGetTheta2(float theta, float r) {
     return q2;
 }
 
-// Get angles for arm 1 from polar coordinates
+
+/*
+	Get angles for arm 1 from polar coordinates
+*/
 float polarGetTheta1(float theta2, float theta, float r, bool inverted, float theta1_old) {
 
     if(r == 0) {
@@ -54,7 +59,10 @@ float polarGetTheta1(float theta2, float theta, float r, bool inverted, float th
     return q1;
 }
 
-// Calculating change of angles
+
+/*
+	Calculating change of angles
+*/
 float deltaAngles(float theta1, float theta_old) {
 
     float delta_theta = theta1 - theta_old;
@@ -69,7 +77,10 @@ float deltaAngles(float theta1, float theta_old) {
     return delta_theta;
 }
 
-// Calculating steps from delta angles
+
+/*
+	Calculating steps from delta angles
+*/
 int steps(float theta, int microstepping) {
 
     if (theta == 0.00000) {
@@ -83,6 +94,10 @@ int steps(float theta, int microstepping) {
     return step;
 }
 
+
+/*
+	Calculating new arm angle from steps taken
+*/
 float thetaFromSteps(int step, int microstepping) {
 
     if (step == 0) {
@@ -95,6 +110,10 @@ float thetaFromSteps(int step, int microstepping) {
     return theta;
 }
 
+
+/*
+	Caluculating the angle from arm angles
+*/
 float thetaFromArms(float q1, float q2) {
 
     float x = 0.5 * cos(q1) + 0.5 * cos(q1 + q2);
@@ -109,6 +128,10 @@ float thetaFromArms(float q1, float q2) {
     return theta;
 }
 
+
+/*
+	Calculating th r from arm angles
+*/
 float rFromArms(float q1, float q2) {
 
     float x = 0.5 * cos(q1) + 0.5 * cos(q1 + q2);

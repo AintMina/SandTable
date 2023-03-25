@@ -5,6 +5,7 @@
 __pycache__
 db.sqlite3
 media
+**/migrations
 
 # Backup files # 
 *.bak 
@@ -139,7 +140,9 @@ arduino/.vscode/
 
 *.thr
 *.txt
+!CMakeLists.txt
 backup/
+**/build
 
 # PlaformIO
 arduino/.pioenvs

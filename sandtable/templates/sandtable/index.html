@@ -13,9 +13,12 @@
     </div>
 
     <div class='media'>
-        <a id='erase' href="{% url 'sandtable:tracks' %}">
-            <span class="icon"><ion-icon name="trash-outline"></ion-icon></span>
-        </a>
+        <form action="#" method="get" id="eraseForm">
+            <a id='erase'>
+                <input type="hidden" name="eraseButton" value="true">
+                <span class="icon"><ion-icon name="trash-outline"></ion-icon></span>
+            </a>
+        </form>
         
         <form action="#" method="get" id="playForm">
             <input type="hidden" name="playButton" value="true">
@@ -28,16 +31,27 @@
             </a>
         </form>
 
-        <a id='next' href="#">
-            <span class="icon"><ion-icon name="play-forward-outline"></ion-icon></span>
-        </a>
+        <form action="#" method="get" id="nextForm">
+            <input type="hidden" name="nextButton" value="true">
+            <a id='next' href="#">
+                <span class="icon"><ion-icon name="play-forward-outline"></ion-icon></span>
+            </a>
+        </form>
     </div>
 
     <script>
         var play_button = document.getElementById("play");
+        var erase_button = document.getElementById("erase");
+        var next_button = document.getElementById("next");
 
         play_button.onpointerup = function() {
             document.getElementById("playForm").submit();
+        }
+        erase_button.onpointerup = function() {
+            document.getElementById("eraseForm").submit();
+        }
+        next_button.onpointerup = function() {
+            document.getElementById("nextForm").submit();
         }
     </script>
 </main>

@@ -1,16 +1,21 @@
 /**
  * 
  Author: AintMina
- Date: 27.3.2021
- Version 0.1
+ Date: 21.02.2023
+ Version 1.5
 
  A driver for driving stepper motors for arduino with CNC-shield.
 
 */
 
 #include "driver.hpp"
-#include "Arduino.h"
+#include "pico/stdlib.h"
+#include <cmath>
 
+
+/*
+	Constructor for the motor object
+*/
 motor::motor(char dir_pin, char step_pin, char enable_pin, char sensor_pin) {
     dir = dir_pin;
     enable = enable_pin;
@@ -18,54 +23,77 @@ motor::motor(char dir_pin, char step_pin, char enable_pin, char sensor_pin) {
     sensor = sensor_pin;
 
     // Initiating the pins
-    pinMode(dir, OUTPUT);
-    pinMode(enable, OUTPUT);
-    pinMode(step, OUTPUT);
-    pinMode(sensor, INPUT);
+    gpio_init(dir);
+    gpio_init(enable);
+    gpio_init(step);
+    gpio_init(sensor);
+    gpio_set_dir(dir, GPIO_OUT);
+    gpio_set_dir(enable, GPIO_OUT);
+    gpio_set_dir(step, GPIO_OUT);
+    gpio_set_dir(sensor, GPIO_IN);
 }
 
+
+/*
+	Checks the input from the sensor
+*/
 bool motor::sensorCheck() {
-    int val = analogRead(sensor);
-    if (val <= 200) {
-        return false;
-    }
-    else if (val > 200) {
+    int val = gpio_get(sensor);
+    if (val) {
         return true;
     }
+    else if (!val) {
+        return false;
+    }
 }
 
-// Disable the motor
+
+/*
+	Disables the motor
+*/
 void motor::Stop() {
-    digitalWrite(enable, HIGH);
+    gpio_put(enable, 1);
 }
 
-// Enable the motor
+
+/*
+	Enable the motor
+*/
 void motor::Enable() {
-    digitalWrite(enable, LOW);
-    delay(10);
+    gpio_put(enable, 0);
 }
 
-// Sets the direction pin and enables the motor
+
+/*
+	Sets the direction pin and enables the motor
+*/
 void motor::setDirection(int steps) {
     if (steps >= 0) {
-        digitalWrite(dir, HIGH);
+        gpio_put(dir, 1);
     }
     else if (steps < 0) {
-        digitalWrite(dir, LOW);
+        gpio_put(dir, 0);
     }
 }
 
-void motor::Step(int steps, float stepdelay = 1) {
-    for (int i = 0; i < steps; i++) {
-        digitalWrite(step, HIGH);
-        delay(stepdelay);
-        digitalWrite(step, LOW);
-        delay(stepdelay);
+
+/*
+	Step function
+*/
+void motor::Step(int steps, float stepdelay) {
+    for (int i = 0; i < abs(steps); i++) {
+        gpio_put(step, 1);
+        sleep_ms(stepdelay);
+        gpio_put(step, 0);
+        sleep_ms(stepdelay);
     }
 }
 
-// Function to divide the steps
-// motor1 needs to have more steps!
+
+/*
+	Function to divide the steps
+	motor1 needs to have more steps!
+*/
 void dualSteps(int step1, motor motor1, int step2, motor motor2, float speed) {
     int v = step1 / step2;      // Variable to figure out step ratio
     float v_f = float(step1) / float(step2);
@@ -96,6 +124,10 @@ void dualSteps(int step1, motor motor1, int step2, motor motor2, float speed) {
     }
 }
 
+
+/*
+	Moves both of the motors at the same time
+*/
 void equalSteps(int step, motor motor1, motor motor2, float speed) {
     for (int i = 0; i < step; i++) {
         motor1.Step(1, speed);
@@ -103,15 +135,19 @@ void equalSteps(int step, motor motor1, motor motor2, float speed) {
     }
 }
 
+
+/*
+	Moves the motors in order until signal from sensor
+*/
 void home(motor motor1, motor motor2) {
     motor1.setDirection(1);
     while (!(motor1.sensorCheck())) {
-        motor1.Step(1);
+        motor1.Step(1, 1);
     }
 
     motor2.setDirection(1);
     while (!(motor2.sensorCheck())) {
-        motor2.Step(1);
+        motor2.Step(1, 1);
     }
 
     motor1.setDirection(-1);
