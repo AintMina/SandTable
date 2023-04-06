@@ -5,6 +5,8 @@ import divideCoords, writeSerial
 
 state = 1
 next_track = 0
+stop = 0
+did = 0
 
 
 # Connecting to the database
@@ -24,9 +26,11 @@ def signal_handler(signum, frame):
     elif signum == signal.SIGUSR2:
         next_track = 1
     elif signum == signal.SIGTERM:
+        global stop
         # Stop the script
-        print('Stopped.')
-        exit()
+        print('Stopping.')
+        stop = 1
+        # exit()
 
 
 # Set up the signal handlers
@@ -36,7 +40,7 @@ signal.signal(signal.SIGTERM, signal_handler)
 
 
 def playTrack(track_name):
-    global state, next_track
+    global state, next_track, did, stop
     path = "/home/pi/sand-table/media/" + track_name
 
     print("Starting")
@@ -49,6 +53,8 @@ def playTrack(track_name):
     writeSerial.writeToSerial(20, 0)
     coords.append(float(writeSerial.waitForResponse()))
 
+    counter = 0
+
     # Opening the .thr file
     with open(path) as f:
         # Iterating lines
@@ -58,12 +64,23 @@ def playTrack(track_name):
             # while paused
             while state == 0:
                 time.sleep(0.1)
-                # print("Paused")
+                if not did:
+                    cursor.execute("UPDATE sandtable_settings SET r = ?, theta = ? WHERE id = 0", (coords[1],coords[0]))
+                    did = 1
+                # if kill signal
+                if stop == 1:
+                    cursor.execute("UPDATE sandtable_settings SET r = ?, theta = ? WHERE id = 0", (coords[1],coords[0]))
+                    exit()
             
             # if next track signal
             if next_track == 1:
                 next_track = 0
                 return coords
+            
+            # if kill signal
+            if stop == 1:
+                cursor.execute("UPDATE sandtable_settings SET r = ?, theta = ? WHERE id = 0", (coords[1],coords[0]))
+                exit()
             
             # If line is comment or line does not contain anything then continue to next line
             if '#' in line or len(line) < 4 or "/" in line:
@@ -116,7 +133,13 @@ def playTrack(track_name):
                 input_r = writeSerial.waitForResponse()
 
             coords = [float(input_angle), float(input_r)]
-            print(coords)
+            # print(coords)
+
+            if counter > 100:
+                cursor.execute("UPDATE sandtable_settings SET r = ?, theta = ? WHERE id = 0", (coords[1],coords[0]))
+                counter = 0
+
+            counter += 1
 
     # Delay just in case
     time.sleep(0.1)
@@ -135,11 +158,11 @@ def PlayQ():
         file = rows[0][1]
         length = rows[0][2]
 
-        print(file)
+        # print(file)
 
         # Playing the track in the first index
         coords = playTrack(file)
-        cursor.execute("UPDATE sandtable_settings SET r = ?, theta = ? WHERE id = 0", (coords[0],coords[1]))
+        cursor.execute("UPDATE sandtable_settings SET r = ?, theta = ? WHERE id = 0", (coords[1],coords[0]))
         connection.commit()
 
         # Deleting the first track that was just played

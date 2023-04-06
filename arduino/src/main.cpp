@@ -150,12 +150,16 @@ void second_core() {
 		if (r == 0) {
 			angle = angle_old;
 		}
+		else if (r > 1.0) {
+			multicore_fifo_push_blocking(1);
+			continue;
+		}
 
 		// Checking if which way to go
-		float delta_angle = abs(angle - angle_old);
-		while (delta_angle > 6) {
-			delta_angle -= M_PI * 2;
-		}
+		// float delta_angle = abs(angle - angle_old);
+		// while (delta_angle > M_PI * 2) {
+		// 	delta_angle -= M_PI * 2;
+		// }
 
 		// Getting angles for the arms
 		float theta2 = polarGetTheta2(angle, r);
