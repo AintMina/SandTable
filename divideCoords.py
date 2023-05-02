@@ -5,11 +5,8 @@ import math
 # 0.03 seems a good distance
 def checkDistance(coord1, coord2, distance):
 
-    # Check if line is from center outwards
-    if coord1[0] == coord2[0]:
-        return False
     # Check if the line point are in the outer edge
-    elif coord1[1] > 0.97 and coord2[1] > 0.97:
+    if coord1[1] > 0.97 and coord2[1] > 0.97:
         return False
 
     # Changing polar coords to X and Y

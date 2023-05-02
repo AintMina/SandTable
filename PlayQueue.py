@@ -105,9 +105,19 @@ def playTrack(track_name):
                         input_angle = writeSerial.waitForResponse()
                         input_r = writeSerial.waitForResponse()
 
-                        # Checking if response is correct
-                        while len(input_angle) < 3 or len(input_r) < 3:
+                        # Checking if angle and rho switched
+                        if len(input_angle) > 3 and len(input_r) > 3 and (abs(r - float(input_angle)) < 0.01 or abs(th - float(input_r)) < 0.01):
                             writeSerial.resetBuffer()
+                            time.sleep(0.01)
+                            writeSerial.writeToSerial(19, 0)
+                            input_angle = writeSerial.waitForResponse()
+                            writeSerial.writeToSerial(20, 0)
+                            input_r = writeSerial.waitForResponse()
+
+                        # Checking if response is correct
+                        while len(input_angle) < 3 or len(input_r) < 3 or float(input_r) > 1.0: # or abs(r - float(input_angle)) < 0.001 or abs(th - float(input_r)) < 0.001:
+                            writeSerial.resetBuffer()
+                            time.sleep(0.01)
                             writeSerial.writeToSerial(19, 0)
                             input_angle = writeSerial.waitForResponse()
                             writeSerial.writeToSerial(20, 0)
@@ -124,22 +134,34 @@ def playTrack(track_name):
             input_angle = writeSerial.waitForResponse()
             input_r = writeSerial.waitForResponse()
 
-            # Checking if response is correct
-            while len(input_angle) < 3 or len(input_r) < 3 or float(input_r) > 1.0:
+            # Checking if angle and rho switched
+            if  len(input_angle) > 3 and len(input_r) > 3 and (abs(r - float(input_angle)) < 0.01 or abs(th - float(input_r)) < 0.01):
                 writeSerial.resetBuffer()
+                time.sleep(0.01)
                 writeSerial.writeToSerial(19, 0)
                 input_angle = writeSerial.waitForResponse()
                 writeSerial.writeToSerial(20, 0)
                 input_r = writeSerial.waitForResponse()
 
+            # Checking if response is correct
+            while len(input_angle) < 3 or len(input_r) < 3 or float(input_r) > 1.0: # or abs(r - float(input_angle)) < 0.001 or abs(th - float(input_r)) < 0.001:
+                writeSerial.resetBuffer()
+                time.sleep(0.01)
+                writeSerial.writeToSerial(19, 0)
+                input_angle = writeSerial.waitForResponse()
+                writeSerial.writeToSerial(20, 0)
+                input_r = writeSerial.waitForResponse()
+
+
             coords = [float(input_angle), float(input_r)]
             # print(coords)
 
-            if counter > 100:
-                cursor.execute("UPDATE sandtable_settings SET r = ?, theta = ? WHERE id = 0", (coords[1],coords[0]))
-                counter = 0
+            # updating coordinates
+            # if counter > 100:
+            #     cursor.execute("UPDATE sandtable_settings SET r = ?, theta = ? WHERE id = 0", (coords[1],coords[0]))
+            #     counter = 0
 
-            counter += 1
+            # counter += 1
 
     # Delay just in case
     time.sleep(0.1)

@@ -150,16 +150,16 @@ void second_core() {
 		if (r == 0) {
 			angle = angle_old;
 		}
-		else if (r > 1.0) {
+		// If r is too much - ignore
+		if (r > 1.0) {
 			multicore_fifo_push_blocking(1);
 			continue;
 		}
-
-		// Checking if which way to go
-		// float delta_angle = abs(angle - angle_old);
-		// while (delta_angle > M_PI * 2) {
-		// 	delta_angle -= M_PI * 2;
-		// }
+		// If delta r is too much - ignore
+		else if (abs(r - r_old) > 0.05) {
+			multicore_fifo_push_blocking(1);
+			continue;
+		}
 
 		// Getting angles for the arms
 		float theta2 = polarGetTheta2(angle, r);
@@ -526,7 +526,9 @@ int main() {
 		// Returning the angle and r when motors are done
 		if (core1_msg == 1) {
 			printf("%f\n", angle_old);
+			fflush(stdout);
 			printf("%f\n", r_old);
+			fflush(stdout);
 		}
 
 		// Trigger the LED track
